@@ -4,29 +4,8 @@ import 'package:test/test.dart';
 
 import 'package:clean_architecture_app/domain/usecases/usecases.dart';
 
-class RemoteAuthentication {
-  final HttpClient httpClient;
-  final String url;
-
-  RemoteAuthentication({required this.httpClient, required this.url});
-
-  Future<void> auth(AuthenticationParams params) async {
-    final body = {
-      'email': params.email,
-      'password': params.secret,
-    };
-
-    await httpClient.request(url: url, method: 'POST', body: body);
-  }
-}
-
-abstract class HttpClient {
-  Future<void>? request({
-    required String url,
-    required String method,
-    Map body,
-  });
-}
+import 'package:clean_architecture_app/data/usecases/usecases.dart';
+import 'package:clean_architecture_app/data/http/http.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {}
 
@@ -52,7 +31,7 @@ void main() {
     verify(httpClient.request(
       url: url,
       method: 'POST',
-      body: {'email': params.email, 'password': params.secret},
+      body: params.toJson(),
     ));
   });
 }
