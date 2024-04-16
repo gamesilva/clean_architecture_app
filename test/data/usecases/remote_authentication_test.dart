@@ -31,7 +31,7 @@ void main() {
     verify(httpClient.request(
       url: url,
       method: 'POST',
-      body: params.toJson(),
+      body: RemoteAuthenticationParams.fromDomain(params).toJson(),
     ));
   });
 }
