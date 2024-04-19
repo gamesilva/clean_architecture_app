@@ -21,7 +21,7 @@ class ClientSpy extends Mock implements Client {}
 
 void main() {
   group('post', () {
-    test('Should call POST with correct values', () async {
+    test('Should call POST with correct value', () async {
       final client = ClientSpy();
       final sut = HttpAdapter(client);
       final url = faker.internet.httpUrl();
