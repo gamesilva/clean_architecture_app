@@ -3,15 +3,17 @@ import 'dart:convert';
 import 'package:faker/faker.dart';
 import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
-
 import 'package:test/test.dart';
 
-class HttpAdapter {
+import 'package:clean_architecture_app/data/http/http_client.dart';
+
+class HttpAdapter implements HttpClient {
   final Client client;
 
   HttpAdapter(this.client);
 
-  Future<void>? request({
+  @override
+  Future<Map> request({
     required String? url,
     required String? method,
     Map? body,
@@ -23,11 +25,13 @@ class HttpAdapter {
 
     final jsonBody = body != null ? jsonEncode(body) : null;
 
-    await client.post(
+    final response = await client.post(
       Uri.parse(url!),
       headers: headers,
       body: jsonBody,
     );
+
+    return jsonDecode(response.body);
   }
 }
 
@@ -85,6 +89,17 @@ void main() {
             any<Uri>(),
             headers: any(named: 'headers'),
           ));
+    });
+
+    test('Should return data if post returns 200', () async {
+      when(() => client.post(
+            any<Uri>(),
+            headers: any(named: 'headers'),
+          )).thenAnswer((_) async => Response('{"any_key":"any_value"}', 200));
+
+      final response = await sut.request(url: url, method: 'POST');
+
+      expect(response, {"any_key": "any_value"});
     });
   });
 }
