@@ -1,5 +1,5 @@
 import 'package:faker/faker.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_architecture_app/domain/helpers/helpers.dart';
@@ -16,11 +16,11 @@ void main() {
   late HttpClientSpy httpClient;
   late String url;
   late AuthenticationParams params;
-  PostExpectation mockRequest() => when(
-        httpClient.request(
-          url: anyNamed('url'),
-          method: anyNamed('method'),
-          body: anyNamed('body'),
+  When mockRequest() => when(
+        () => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
         ),
       );
 
@@ -46,11 +46,11 @@ void main() {
     mockHttpData(
         {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
     await sut.auth(params);
-    verify(httpClient.request(
-      url: url,
-      method: 'POST',
-      body: RemoteAuthenticationParams.fromDomain(params).toJson(),
-    ));
+    verify(() => httpClient.request(
+          url: url,
+          method: 'POST',
+          body: RemoteAuthenticationParams.fromDomain(params).toJson(),
+        ));
   });
 
   test('Should throw UnexpectedError if HttpClient returns 400', () async {
