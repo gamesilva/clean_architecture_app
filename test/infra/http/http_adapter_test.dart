@@ -13,7 +13,7 @@ class HttpAdapter implements HttpClient {
   HttpAdapter(this.client);
 
   @override
-  Future<Map>? request({
+  Future<Map?>? request({
     required String? url,
     required String? method,
     Map? body,
@@ -31,7 +31,11 @@ class HttpAdapter implements HttpClient {
       body: jsonBody,
     );
 
-    return response.body.isEmpty ? null : jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return response.body.isEmpty ? null : jsonDecode(response.body);
+    } else {
+      return null;
+    }
   }
 }
 
@@ -101,21 +105,26 @@ void main() {
       expect(response, {"any_key": "any_value"});
     });
 
-    //? Este teste não vai funcionar com API fake.
-    // test('Should return null if post returns 200 with no data', () async {
-    //   mockResponse(200, body: '');
+    test('Should return null if post returns 200 with no data', () async {
+      mockResponse(200, body: '');
 
-    //   final response = await sut.request(url: url, method: 'POST');
+      final response = await sut.request(url: url, method: 'POST');
 
-    //   expect(response, null);
-    // });
+      expect(response, null);
+    });
 
-    //? Este teste não vai funcionar com API fake.
-    // test('Should return null if post returns 204', () async {
-    //   mockResponse(204, body: '');
-    //   final response = await sut.request(url: url, method: 'POST');
+    test('Should return null if post returns 204', () async {
+      mockResponse(204, body: '');
+      final response = await sut.request(url: url, method: 'POST');
 
-    //   expect(response, null);
-    // });
+      expect(response, null);
+    });
+
+    test('Should return null if post returns 204 with data', () async {
+      mockResponse(204);
+      final response = await sut.request(url: url, method: 'POST');
+
+      expect(response, null);
+    });
   });
 }
