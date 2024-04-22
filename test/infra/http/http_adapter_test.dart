@@ -103,11 +103,16 @@ void main() {
 
     //? Este teste não vai funcionar com API fake.
     // test('Should return null if post returns 200 with no data', () async {
-    //   when(() => client.post(
-    //         any<Uri>(),
-    //         headers: any(named: 'headers'),
-    //       )).thenAnswer((_) async => Response('', 200));
+    //   mockResponse(200, body: '');
 
+    //   final response = await sut.request(url: url, method: 'POST');
+
+    //   expect(response, null);
+    // });
+
+    //? Este teste não vai funcionar com API fake.
+    // test('Should return null if post returns 204', () async {
+    //   mockResponse(204, body: '');
     //   final response = await sut.request(url: url, method: 'POST');
 
     //   expect(response, null);
