@@ -13,7 +13,7 @@ class HttpAdapter implements HttpClient {
   HttpAdapter(this.client);
 
   @override
-  Future<Map> request({
+  Future<Map>? request({
     required String? url,
     required String? method,
     Map? body,
@@ -31,7 +31,7 @@ class HttpAdapter implements HttpClient {
       body: jsonBody,
     );
 
-    return jsonDecode(response.body);
+    return response.body.isEmpty ? null : jsonDecode(response.body);
   }
 }
 
@@ -101,5 +101,17 @@ void main() {
 
       expect(response, {"any_key": "any_value"});
     });
+
+    //? Este teste não vai funcionar com API fake.
+    // test('Should return null if post returns 200 with no data', () async {
+    //   when(() => client.post(
+    //         any<Uri>(),
+    //         headers: any(named: 'headers'),
+    //       )).thenAnswer((_) async => Response('', 200));
+
+    //   final response = await sut.request(url: url, method: 'POST');
+
+    //   expect(response, null);
+    // });
   });
 }
