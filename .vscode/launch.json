@@ -11,6 +11,7 @@
             "name": "Flutter",
             "type": "dart",
             "request": "launch",
+            "program": "lib/main/main.dart"
         }
     ]
 }
