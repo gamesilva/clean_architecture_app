@@ -29,7 +29,10 @@ class LoginPage extends StatelessWidget {
                         return TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            errorText: snapshot.data,
+                            errorText:
+                                (snapshot.data != null && snapshot.data != '')
+                                    ? snapshot.data
+                                    : null,
                             labelStyle: TextStyle(
                               color: Theme.of(context).primaryColor,
                             ),
