@@ -16,16 +16,16 @@ void main() {
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
   late StreamController<String?> mainErrorController;
-  late StreamController<bool?> isFormValidController;
-  late StreamController<bool?> isLoadingController;
+  late StreamController<bool> isFormValidController;
+  late StreamController<bool> isLoadingController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
     mainErrorController = StreamController<String?>();
-    isFormValidController = StreamController<bool?>();
-    isLoadingController = StreamController<bool?>();
+    isFormValidController = StreamController<bool>();
+    isLoadingController = StreamController<bool>();
 
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
