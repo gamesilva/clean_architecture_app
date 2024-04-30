@@ -81,6 +81,8 @@ void main() {
       reason:
           'To test a button, you need to get it as a Widget and you should use tester intead of find.',
     );
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should call validate with corret values',
@@ -221,5 +223,16 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('Should hide loading', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isLoadingController.add(true); // Abrindo o loading
+    await tester.pump();
+    isLoadingController.add(false); // Fechando o loading
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 }
