@@ -34,6 +34,8 @@ void main() {
     // Aqui eu garanto que o listen só execute uma vez caso o valor anterior seja o mesmo.
     sut.emailErrorStream
         .listen(expectAsync1((error) => expect(error, 'error')));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
 
     // Mesmo validando duas vezes com o mesmo valor, a stream só emite um.
     sut.validateEmail(email);
