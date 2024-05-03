@@ -54,30 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                           Padding(
                             padding:
                                 const EdgeInsets.only(top: 8.0, bottom: 32),
-                            child: StreamBuilder<dynamic>(
-                                stream: widget.presenter?.passwordErrorStream,
-                                builder: (context, snapshot) {
-                                  return TextFormField(
-                                    decoration: InputDecoration(
-                                      labelText: 'Senha',
-                                      errorText: (snapshot.data != null &&
-                                              snapshot.data != '')
-                                          ? snapshot.data
-                                          : null,
-                                      labelStyle: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                      icon: Icon(
-                                        Icons.lock,
-                                        color:
-                                            Theme.of(context).primaryColorLight,
-                                      ),
-                                    ),
-                                    onChanged:
-                                        widget.presenter?.validatePassword,
-                                    obscureText: true,
-                                  );
-                                }),
+                            child: PasswordInput(),
                           ),
                           StreamBuilder<dynamic>(
                             stream: widget.presenter?.isFormValidStream,
