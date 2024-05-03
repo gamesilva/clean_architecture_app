@@ -11,8 +11,9 @@ class StreamLoginPresenter {
   final _controller = StreamController<LoginState>.broadcast();
   final _state = LoginState();
 
+  // O distinct garante a emissão de valores diferentes do último
   Stream<String?> get emailErrorStream =>
-      _controller.stream.map((state) => state.emailError);
+      _controller.stream.map((state) => state.emailError).distinct();
 
   StreamLoginPresenter({required this.validation});
 
