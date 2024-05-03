@@ -3,9 +3,15 @@ import 'dart:async';
 import '../protocols/protocols.dart';
 
 class LoginState {
+  String? email;
   String? emailError;
+  String? password;
   String? passwordError;
-  bool get isFormValid => false;
+  bool get isFormValid =>
+      emailError == null &&
+      passwordError == null &&
+      email != null &&
+      password != null;
 }
 
 class StreamLoginPresenter {
@@ -30,11 +36,13 @@ class StreamLoginPresenter {
   }
 
   void validateEmail(String email) {
+    _state.email = email;
     _state.emailError = validation.validate(field: 'email', value: email);
     _update();
   }
 
   void validatePassword(String password) {
+    _state.password = password;
     _state.passwordError =
         validation.validate(field: 'password', value: password);
     _update();
