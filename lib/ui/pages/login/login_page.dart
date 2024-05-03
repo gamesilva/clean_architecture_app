@@ -56,18 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                                 const EdgeInsets.only(top: 8.0, bottom: 32),
                             child: PasswordInput(),
                           ),
-                          StreamBuilder<dynamic>(
-                            stream: widget.presenter?.isFormValidStream,
-                            builder: (context, snapshot) {
-                              return RaisedButton(
-                                onPressed:
-                                    (snapshot.data != null && snapshot.data)
-                                        ? widget.presenter?.auth
-                                        : null,
-                                child: Text('Entrar'.toUpperCase()),
-                              );
-                            },
-                          ),
+                          LoginButton(),
                           FlatButton.icon(
                             onPressed: () {},
                             icon: const Icon(Icons.person),
