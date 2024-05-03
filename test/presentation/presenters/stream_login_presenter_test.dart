@@ -19,11 +19,16 @@ class StreamLoginPresenter {
 }
 
 void main() {
-  test('Should call Validation with correct email', () {
-    final validation = ValidationSpy();
-    final sut = StreamLoginPresenter(validation: validation);
-    final email = faker.internet.email();
+  late Validation validation;
+  late StreamLoginPresenter sut;
+  late String email;
 
+  setUp(() {
+    validation = ValidationSpy();
+    sut = StreamLoginPresenter(validation: validation);
+    email = faker.internet.email();
+  });
+  test('Should call Validation with correct email', () {
     sut.validateEmail(email);
 
     verify(() => validation.validate(field: 'email', value: email)).called(1);
