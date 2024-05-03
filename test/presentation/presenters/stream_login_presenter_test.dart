@@ -4,9 +4,7 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-abstract class Validation {
-  String? validate({required String field, required String value});
-}
+import 'package:clean_architecture_app/presentation/protocols/validation.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
