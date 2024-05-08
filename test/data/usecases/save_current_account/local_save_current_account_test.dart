@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_architecture_app/domain/entities/entities.dart';
+import 'package:clean_architecture_app/domain/helpers/helpers.dart';
 import 'package:clean_architecture_app/domain/usecases/usecases.dart';
 
 class LocalSaveCurrentAccount implements SaveCurrentAccount {
@@ -12,10 +13,14 @@ class LocalSaveCurrentAccount implements SaveCurrentAccount {
 
   @override
   Future<void>? save(AccountEntity account) async {
-    await saveSecureChacheStorage.saveSecure(
-      key: 'token',
-      value: account.token,
-    );
+    try {
+      await saveSecureChacheStorage.saveSecure(
+        key: 'token',
+        value: account.token,
+      );
+    } catch (error) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
@@ -37,5 +42,22 @@ void main() {
 
     verify(() =>
         saveSecureChacheStorage.saveSecure(key: 'token', value: account.token));
+  });
+
+  test('Should throw UnexpectedError if SaveSecureChacheStorage throws',
+      () async {
+    final saveSecureChacheStorage = SaveChacheStorageSpy();
+    final account = AccountEntity(faker.guid.guid());
+    final sut = LocalSaveCurrentAccount(
+      saveSecureChacheStorage: saveSecureChacheStorage,
+    );
+
+    when(() => saveSecureChacheStorage.saveSecure(
+        key: any(named: 'key'),
+        value: any(named: 'value'))).thenThrow(Exception());
+
+    final future = sut.save(account);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
