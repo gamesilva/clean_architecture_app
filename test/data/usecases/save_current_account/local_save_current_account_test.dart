@@ -28,16 +28,22 @@ abstract class SaveSecureChacheStorage {
   Future<void>? saveSecure({required String key, required String value});
 }
 
-class SaveChacheStorageSpy extends Mock implements SaveSecureChacheStorage {}
+class SaveSecureChacheStorageSpy extends Mock
+    implements SaveSecureChacheStorage {}
 
 void main() {
-  test('Should call SaveCacheStorage with correct value', () async {
-    final saveSecureChacheStorage = SaveChacheStorageSpy();
-    final sut = LocalSaveCurrentAccount(
+  late LocalSaveCurrentAccount sut;
+  late SaveSecureChacheStorageSpy saveSecureChacheStorage;
+  late AccountEntity account;
+
+  setUp(() {
+    saveSecureChacheStorage = SaveSecureChacheStorageSpy();
+    account = AccountEntity(faker.guid.guid());
+    sut = LocalSaveCurrentAccount(
       saveSecureChacheStorage: saveSecureChacheStorage,
     );
-    final account = AccountEntity(faker.guid.guid());
-
+  });
+  test('Should call SaveCacheStorage with correct value', () async {
     sut.save(account);
 
     verify(() =>
@@ -46,12 +52,6 @@ void main() {
 
   test('Should throw UnexpectedError if SaveSecureChacheStorage throws',
       () async {
-    final saveSecureChacheStorage = SaveChacheStorageSpy();
-    final account = AccountEntity(faker.guid.guid());
-    final sut = LocalSaveCurrentAccount(
-      saveSecureChacheStorage: saveSecureChacheStorage,
-    );
-
     when(() => saveSecureChacheStorage.saveSecure(
         key: any(named: 'key'),
         value: any(named: 'value'))).thenThrow(Exception());
