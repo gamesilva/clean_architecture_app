@@ -43,6 +43,11 @@ void main() {
       saveSecureChacheStorage: saveSecureChacheStorage,
     );
   });
+
+  void mockError() => when(() => saveSecureChacheStorage.saveSecure(
+      key: any(named: 'key'),
+      value: any(named: 'value'))).thenThrow(Exception());
+
   test('Should call SaveCacheStorage with correct value', () async {
     sut.save(account);
 
@@ -52,9 +57,7 @@ void main() {
 
   test('Should throw UnexpectedError if SaveSecureChacheStorage throws',
       () async {
-    when(() => saveSecureChacheStorage.saveSecure(
-        key: any(named: 'key'),
-        value: any(named: 'value'))).thenThrow(Exception());
+    mockError();
 
     final future = sut.save(account);
 
