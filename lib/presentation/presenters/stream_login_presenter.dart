@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import '../../ui/pages/pages.dart';
-
 import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
-
+import '../../ui/pages/pages.dart';
 import '../protocols/protocols.dart';
 
 class LoginState {
@@ -25,6 +23,7 @@ class LoginState {
 class StreamLoginPresenter implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
+  final SaveCurrentAccount saveCurrentAccount;
   StreamController<LoginState>? _controller =
       StreamController<LoginState>.broadcast();
   final _state = LoginState();
@@ -53,6 +52,7 @@ class StreamLoginPresenter implements LoginPresenter {
   StreamLoginPresenter({
     required this.validation,
     required this.authentication,
+    required this.saveCurrentAccount,
   });
 
   void _update() {
@@ -80,9 +80,11 @@ class StreamLoginPresenter implements LoginPresenter {
     _update();
 
     try {
-      await authentication.auth(
+      final account = await authentication.auth(
         AuthenticationParams(email: _state.email!, secret: _state.password!),
       );
+
+      await saveCurrentAccount.save(account);
     } on DomainError catch (error) {
       _state.mainError = error.description;
     }
