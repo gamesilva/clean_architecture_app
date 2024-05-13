@@ -29,6 +29,7 @@ class StreamLoginPresenter implements LoginPresenter {
   final _state = LoginState();
 
   StreamController<String>? _controllerMainError = StreamController<String>();
+  StreamController<String>? _controllerNavigateTo = StreamController<String>();
 
   // O distinct garante a emissão de valores diferentes do último
   @override
@@ -41,6 +42,10 @@ class StreamLoginPresenter implements LoginPresenter {
 
   @override
   Stream<String> get mainErrorStream => _controllerMainError!.stream.distinct();
+
+  @override
+  Stream<String?> get navigateToStream =>
+      _controllerNavigateTo!.stream.distinct();
 
   @override
   Stream<bool> get isFormValidStream =>
@@ -62,6 +67,10 @@ class StreamLoginPresenter implements LoginPresenter {
 
   void _updateError(String error) {
     _controllerMainError?.add(error);
+  }
+
+  void _updateNavigateTo(String route) {
+    _controllerNavigateTo?.add(route);
   }
 
   @override
@@ -90,6 +99,7 @@ class StreamLoginPresenter implements LoginPresenter {
       );
 
       await saveCurrentAccount.save(account);
+      _updateNavigateTo('/surveys');
     } on DomainError catch (error) {
       _updateError(error.description);
 
@@ -105,5 +115,8 @@ class StreamLoginPresenter implements LoginPresenter {
 
     _controllerMainError?.close();
     _controllerMainError = null;
+
+    _controllerNavigateTo?.close();
+    _controllerNavigateTo = null;
   }
 }

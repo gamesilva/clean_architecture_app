@@ -16,6 +16,7 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   final _emailError = RxnString();
   final _passwordError = RxnString();
   final _mainError = RxnString();
+  final _navigateToError = RxnString();
   final _isFormValid = false.obs;
   final _isLoading = false.obs;
 
@@ -28,6 +29,9 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
 
   @override
   Stream<String?> get mainErrorStream => _mainError.stream;
+
+  @override
+  Stream<String?> get navigateToStream => _navigateToError.stream;
 
   @override
   Stream<bool> get isFormValidStream => _isFormValid.stream;
