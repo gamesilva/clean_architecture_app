@@ -37,10 +37,18 @@ void main() {
   void mockAuthenticationError(DomainError error) =>
       mockAuthenticationCall().thenThrow(error);
 
+  When mockSaveCurrentAccountCall() =>
+      when(() => saveCurrentAccount.save(any<AccountEntity>()));
+  void mockSaveCurrentAccountError() =>
+      mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
+
   setUpAll(() {
     email = faker.internet.email();
     password = faker.internet.password();
+    token = faker.guid.guid();
+
     registerFallbackValue(AuthenticationParams(email: email, secret: password));
+    registerFallbackValue(AccountEntity(token));
   });
 
   setUp(() {
@@ -53,10 +61,6 @@ void main() {
       authentication: authentication,
       saveCurrentAccount: saveCurrentAccount,
     );
-
-    email = faker.internet.email();
-    password = faker.internet.password();
-    token = faker.guid.guid();
 
     mockValidation();
     mockAuthentication();
@@ -193,9 +197,17 @@ void main() {
   });
 
   test('Should not emit after dispose', () async {
+    mockSaveCurrentAccountError();
+
     expectLater(sut.emailErrorStream, neverEmits(null));
+    expectLater(sut.passwordErrorStream, neverEmits(null));
+    expectLater(sut.mainErrorStream, neverEmits(null));
+
     sut.dispose();
+
     sut.validateEmail(email);
+    sut.validatePassword(password);
+    await sut.auth();
   });
 
   test('Should call SaveCurrentAccount with correct value.', () async {
@@ -205,5 +217,18 @@ void main() {
     await sut.auth();
 
     verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+
+  test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {
+    mockSaveCurrentAccountError();
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    sut.mainErrorStream.listen(expectAsync1(
+        (error) => expect(error, 'Algo errado aconteceu. Tente novamente')));
+
+    await sut.auth();
   });
 }

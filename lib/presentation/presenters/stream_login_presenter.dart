@@ -28,6 +28,8 @@ class StreamLoginPresenter implements LoginPresenter {
       StreamController<LoginState>.broadcast();
   final _state = LoginState();
 
+  StreamController<String>? _controllerMainError = StreamController<String>();
+
   // O distinct garante a emissão de valores diferentes do último
   @override
   Stream<String?> get emailErrorStream =>
@@ -38,8 +40,7 @@ class StreamLoginPresenter implements LoginPresenter {
       _controller!.stream.map((state) => state.passwordError).distinct();
 
   @override
-  Stream<String?> get mainErrorStream =>
-      _controller!.stream.map((state) => state.mainError).distinct();
+  Stream<String> get mainErrorStream => _controllerMainError!.stream.distinct();
 
   @override
   Stream<bool> get isFormValidStream =>
@@ -57,6 +58,10 @@ class StreamLoginPresenter implements LoginPresenter {
 
   void _update() {
     _controller?.add(_state);
+  }
+
+  void _updateError(String error) {
+    _controllerMainError?.add(error);
   }
 
   @override
@@ -86,7 +91,7 @@ class StreamLoginPresenter implements LoginPresenter {
 
       await saveCurrentAccount.save(account);
     } on DomainError catch (error) {
-      _state.mainError = error.description;
+      _updateError(error.description);
     }
 
     _state.isLoading = false;
@@ -97,5 +102,8 @@ class StreamLoginPresenter implements LoginPresenter {
   void dispose() {
     _controller?.close();
     _controller = null;
+
+    _controllerMainError?.close();
+    _controllerMainError = null;
   }
 }
