@@ -13,14 +13,17 @@ class RemoteAuthentication implements Authentication {
 
   @override
   Future<AccountEntity> auth(AuthenticationParams params) async {
-    final body = RemoteAuthenticationParams.fromDomain(params).toJson();
+    // final body = RemoteAuthenticationParams.fromDomain(params).toJson();
     try {
-      final httpResponse = await httpClient.request(
-        url: url,
-        method: 'POST',
-        body: body,
-      );
-      return RemoteAccountModel.fromJson(httpResponse!).toEntity();
+      // final httpResponse = await httpClient.request(
+      //   url: url,
+      //   method: 'POST',
+      //   body: body,
+      // );
+
+      return RemoteAccountModel.fromJson({
+        'accessToken': 'f4517aed-394c-4f5a-93e1-a65ab5d49d18',
+      }).toEntity();
     } on HttpError catch (error) {
       throw error == HttpError.unauthorized
           ? DomainError.invalidCredentials
