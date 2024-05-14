@@ -28,8 +28,10 @@ class StreamLoginPresenter implements LoginPresenter {
       StreamController<LoginState>.broadcast();
   final _state = LoginState();
 
-  StreamController<String>? _controllerMainError = StreamController<String>();
-  StreamController<String>? _controllerNavigateTo = StreamController<String>();
+  StreamController<String>? _controllerMainError =
+      StreamController<String>.broadcast();
+  StreamController<String>? _controllerNavigateTo =
+      StreamController<String>.broadcast();
 
   // O distinct garante a emissão de valores diferentes do último
   @override
