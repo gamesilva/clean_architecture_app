@@ -1,40 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
-class SplashPage extends StatelessWidget {
-  final SplashPresenter presenter;
-
-  const SplashPage({Key? key, required this.presenter}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('4Dev'),
-      ),
-      body: Builder(builder: (context) {
-        presenter.navigateToStream.listen((page) {
-          if (page?.isNotEmpty == true) {
-            Get.offAllNamed(page!);
-          }
-        });
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }),
-    );
-  }
-}
-
-abstract class SplashPresenter {
-  Stream<String?> get navigateToStream;
-  Future<void>? loadCurrentAccount();
-}
+import 'package:clean_architecture_app/ui/pages/pages.dart';
 
 class SplashPresenterSpy extends Mock implements SplashPresenter {}
 
