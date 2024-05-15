@@ -9,7 +9,7 @@ class SplashPage extends StatelessWidget {
   const SplashPage({Key? key, required this.presenter}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    presenter.loadCurrentAccount();
+    presenter.checkAccount();
 
     return Scaffold(
       appBar: AppBar(
