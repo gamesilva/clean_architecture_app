@@ -1,37 +1,16 @@
-import 'dart:async';
-import 'package:clean_architecture_app/domain/entities/account_entity.dart';
 import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_architecture_app/domain/entities/entities.dart';
 import 'package:clean_architecture_app/domain/usecases/usecases.dart';
-import 'package:clean_architecture_app/ui/pages/pages.dart';
-
-class StreamSplashPresenter implements SplashPresenter {
-  final LoadCurrentAccount loadCurrentAccount;
-  final _navigateTo = StreamController<String?>();
-
-  @override
-  Stream<String?> get navigateToStream => _navigateTo.stream;
-
-  StreamSplashPresenter({required this.loadCurrentAccount});
-
-  @override
-  Future<void>? checkAccount() async {
-    try {
-      final account = await loadCurrentAccount.load();
-      _navigateTo.add(account != null ? '/surveys' : '/login');
-    } catch (e) {
-      _navigateTo.add('/login');
-    }
-  }
-}
+import 'package:clean_architecture_app/presentation/presenters/presenters.dart';
 
 class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount {}
 
 void main() {
-  late LoadCurrentAccount loadCurrentAccount;
-  late SplashPresenter sut;
+  late LoadCurrentAccountSpy loadCurrentAccount;
+  late StreamSplashPresenter sut;
 
   When mockLoadCurrentAccountCall() => when(() => loadCurrentAccount.load());
 
