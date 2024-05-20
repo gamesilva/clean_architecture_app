@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
+import '../../helpers/errors/errors.dart';
+import '../../../utils/i18n/i18n.dart';
 import 'components/components.dart';
 import 'login_presenter.dart';
 
@@ -39,9 +41,9 @@ class _LoginPageState extends State<LoginPage> {
             isLoading ? showLoading(context) : hideLoading(context);
           });
 
-          widget.presenter?.mainErrorStream.listen((error) {
+          widget.presenter?.mainErrorStream.listen((UIError? error) {
             if (error != null) {
-              showErrorMessage(context, error);
+              showErrorMessage(context, error.description);
             }
           });
 
@@ -76,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                             FlatButton.icon(
                               onPressed: () {},
                               icon: const Icon(Icons.person),
-                              label: const Text('Criar conta'),
+                              label: Text(R.strings.addAccount),
                             )
                           ],
                         ),

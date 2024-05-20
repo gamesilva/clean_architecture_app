@@ -3,13 +3,14 @@ import 'dart:async';
 import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/pages.dart';
+import '../../ui/helpers/errors/ui_error.dart';
 import '../protocols/protocols.dart';
 
 class LoginState {
   String? email;
-  String? emailError;
+  UIError? emailError;
   String? password;
-  String? passwordError;
+  UIError? passwordError;
   String? mainError;
   bool isLoading = false;
 
@@ -28,22 +29,23 @@ class StreamLoginPresenter implements LoginPresenter {
       StreamController<LoginState>.broadcast();
   final _state = LoginState();
 
-  StreamController<String>? _controllerMainError =
-      StreamController<String>.broadcast();
+  StreamController<UIError>? _controllerMainError =
+      StreamController<UIError>.broadcast();
   StreamController<String>? _controllerNavigateTo =
       StreamController<String>.broadcast();
 
   // O distinct garante a emissão de valores diferentes do último
   @override
-  Stream<String?> get emailErrorStream =>
+  Stream<UIError?> get emailErrorStream =>
       _controller!.stream.map((state) => state.emailError).distinct();
 
   @override
-  Stream<String?> get passwordErrorStream =>
+  Stream<UIError?> get passwordErrorStream =>
       _controller!.stream.map((state) => state.passwordError).distinct();
 
   @override
-  Stream<String> get mainErrorStream => _controllerMainError!.stream.distinct();
+  Stream<UIError> get mainErrorStream =>
+      _controllerMainError!.stream.distinct();
 
   @override
   Stream<String?> get navigateToStream =>
@@ -67,7 +69,7 @@ class StreamLoginPresenter implements LoginPresenter {
     _controller?.add(_state);
   }
 
-  void _updateError(String error) {
+  void _updateError(UIError error) {
     _controllerMainError?.add(error);
   }
 
@@ -78,16 +80,27 @@ class StreamLoginPresenter implements LoginPresenter {
   @override
   void validateEmail(String email) {
     _state.email = email;
-    _state.emailError = validation.validate(field: 'email', value: email);
+    _state.emailError = _validateField(field: 'email', value: email);
     _update();
   }
 
   @override
   void validatePassword(String password) {
     _state.password = password;
-    _state.passwordError =
-        validation.validate(field: 'password', value: password);
+    _state.passwordError = _validateField(field: 'password', value: password);
     _update();
+  }
+
+  UIError? _validateField({required String field, required String value}) {
+    final error = validation.validate(field: field, value: value);
+    switch (error) {
+      case ValidationError.invalidField:
+        return UIError.invalidField;
+      case ValidationError.requiredField:
+        return UIError.requiredField;
+      default:
+        return null;
+    }
   }
 
   @override
@@ -103,7 +116,13 @@ class StreamLoginPresenter implements LoginPresenter {
       await saveCurrentAccount.save(account);
       _updateNavigateTo('/surveys');
     } on DomainError catch (error) {
-      _updateError(error.description);
+      switch (error) {
+        case DomainError.invalidCredentials:
+          _updateError(UIError.invalidCredentials);
+          break;
+        default:
+          _updateError(UIError.unexpected);
+      }
 
       _state.isLoading = false;
       _update();
