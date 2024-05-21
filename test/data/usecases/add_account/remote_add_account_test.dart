@@ -2,6 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_architecture_app/domain/helpers/helpers.dart';
 import 'package:clean_architecture_app/domain/usecases/usecases.dart';
 
 import 'package:clean_architecture_app/data/usecases/usecases.dart';
@@ -15,6 +16,18 @@ void main() {
   late HttpClientSpy httpClient;
   late String url;
   late AddAccountParams params;
+
+  When mockRequest() => when(
+        () => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+        ),
+      );
+
+  void mockHttpError(HttpError error) {
+    mockRequest().thenThrow(error);
+  }
 
   setUp(() {
     httpClient = HttpClientSpy();
@@ -40,5 +53,19 @@ void main() {
             'passwordConfirmation': params.passwordConfirmation,
           },
         ));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 400', () async {
+    mockHttpError(HttpError.badRequest);
+
+    final future = sut.add(params);
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectedError if HttpClient returns 404', () async {
+    mockHttpError(HttpError.notFound);
+
+    final future = sut.add(params);
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
