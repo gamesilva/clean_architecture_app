@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
-import '../../helpers/errors/errors.dart';
-import '../../../utils/i18n/i18n.dart';
+import '../../helpers/helpers.dart';
+
 import 'components/components.dart';
 import 'login_presenter.dart';
 
@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   const LoginHeader(),
-                  const Headline1(text: 'Login'),
+                  Headline1(text: R.strings.login),
                   Padding(
                     padding: const EdgeInsets.all(32),
                     child: Provider(
