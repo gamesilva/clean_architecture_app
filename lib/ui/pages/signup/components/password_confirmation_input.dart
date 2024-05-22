@@ -14,6 +14,7 @@ class PasswordConfirmationInput extends StatelessWidget {
         return TextFormField(
           decoration: InputDecoration(
             labelText: R.strings.confirmPassword,
+            errorText: snapshot.hasData ? snapshot.data?.description : null,
             labelStyle: TextStyle(
               color: Theme.of(context).primaryColor,
             ),
