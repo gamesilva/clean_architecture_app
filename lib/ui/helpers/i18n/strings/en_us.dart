@@ -17,10 +17,16 @@ class EnUs implements Translations {
   String get addAccount => 'Add Account';
 
   @override
+  String get confirmPassword => 'Confirm password';
+
+  @override
   String get enter => 'Enter';
 
   @override
   String get login => 'Login';
+
+  @override
+  String get name => 'Name';
 
   @override
   String get email => 'Email';

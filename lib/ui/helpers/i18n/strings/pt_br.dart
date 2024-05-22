@@ -17,10 +17,16 @@ class PtBr implements Translations {
   String get addAccount => 'Criar Conta';
 
   @override
+  String get confirmPassword => 'Confirmar senha';
+
+  @override
   String get enter => 'Entrar';
 
   @override
   String get login => 'Login';
+
+  @override
+  String get name => 'Nome';
 
   @override
   String get email => 'Email';
