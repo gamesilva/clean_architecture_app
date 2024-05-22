@@ -14,6 +14,9 @@ class EnUs implements Translations {
   String get msgUnexpectedError => 'Something get wrong. Try again';
 
   @override
+  String get msgEmailInUse => 'This email has already been used';
+
+  @override
   String get addAccount => 'Add Account';
 
   @override

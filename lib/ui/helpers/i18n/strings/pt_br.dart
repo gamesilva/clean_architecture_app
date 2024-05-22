@@ -14,6 +14,9 @@ class PtBr implements Translations {
   String get msgUnexpectedError => 'Algo errado aconteceu. Tente novamente';
 
   @override
+  String get msgEmailInUse => 'O email já está em uso';
+
+  @override
   String get addAccount => 'Criar Conta';
 
   @override
