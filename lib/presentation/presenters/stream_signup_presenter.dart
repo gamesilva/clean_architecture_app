@@ -6,6 +6,7 @@ import '../protocols/protocols.dart';
 class SignUpState {
   UIError? emailError;
   UIError? nameError;
+  UIError? passwordError;
 
   bool get isFormValid => false;
 }
@@ -19,11 +20,14 @@ class StreamSignUpPresenter {
 
   // O distinct garante a emissão de valores diferentes do último
 
+  Stream<UIError?> get nameErrorStream =>
+      _controller!.stream.map((state) => state.nameError).distinct();
+
   Stream<UIError?> get emailErrorStream =>
       _controller!.stream.map((state) => state.emailError).distinct();
 
-  Stream<UIError?> get nameErrorStream =>
-      _controller!.stream.map((state) => state.nameError).distinct();
+  Stream<UIError?> get passwordErrorStream =>
+      _controller!.stream.map((state) => state.passwordError).distinct();
 
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
@@ -36,13 +40,18 @@ class StreamSignUpPresenter {
     _controller?.add(_state);
   }
 
+  void validateName(String name) {
+    _state.nameError = _validateField(field: 'name', value: name);
+    _update();
+  }
+
   void validateEmail(String email) {
     _state.emailError = _validateField(field: 'email', value: email);
     _update();
   }
 
-  void validateName(String name) {
-    _state.nameError = _validateField(field: 'name', value: name);
+  void validatePassword(String password) {
+    _state.passwordError = _validateField(field: 'password', value: password);
     _update();
   }
 
