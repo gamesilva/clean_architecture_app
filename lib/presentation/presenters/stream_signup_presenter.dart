@@ -5,6 +5,7 @@ import '../protocols/protocols.dart';
 
 class SignUpState {
   UIError? emailError;
+  UIError? nameError;
 
   bool get isFormValid => false;
 }
@@ -21,6 +22,9 @@ class StreamSignUpPresenter {
   Stream<UIError?> get emailErrorStream =>
       _controller!.stream.map((state) => state.emailError).distinct();
 
+  Stream<UIError?> get nameErrorStream =>
+      _controller!.stream.map((state) => state.nameError).distinct();
+
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
 
@@ -34,6 +38,11 @@ class StreamSignUpPresenter {
 
   void validateEmail(String email) {
     _state.emailError = _validateField(field: 'email', value: email);
+    _update();
+  }
+
+  void validateName(String name) {
+    _state.nameError = _validateField(field: 'name', value: name);
     _update();
   }
 
