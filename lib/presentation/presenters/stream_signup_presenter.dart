@@ -7,6 +7,7 @@ class SignUpState {
   UIError? emailError;
   UIError? nameError;
   UIError? passwordError;
+  UIError? passwordConfirmationError;
 
   bool get isFormValid => false;
 }
@@ -28,6 +29,10 @@ class StreamSignUpPresenter {
 
   Stream<UIError?> get passwordErrorStream =>
       _controller!.stream.map((state) => state.passwordError).distinct();
+
+  Stream<UIError?> get passwordConfirmationErrorStream => _controller!.stream
+      .map((state) => state.passwordConfirmationError)
+      .distinct();
 
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
@@ -52,6 +57,14 @@ class StreamSignUpPresenter {
 
   void validatePassword(String password) {
     _state.passwordError = _validateField(field: 'password', value: password);
+    _update();
+  }
+
+  void validatePasswordConfirmation(String passwordConfirmation) {
+    _state.passwordConfirmationError = _validateField(
+      field: 'passwordConfirmation',
+      value: passwordConfirmation,
+    );
     _update();
   }
 

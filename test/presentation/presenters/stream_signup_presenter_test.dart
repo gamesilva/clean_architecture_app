@@ -15,6 +15,7 @@ void main() {
   late String name;
   late String email;
   late String password;
+  late String passwordConfirmation;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
       field: field ?? any(named: 'field'), value: any(named: 'value')));
@@ -26,6 +27,7 @@ void main() {
     name = faker.person.name();
     email = faker.internet.email();
     password = faker.internet.password();
+    passwordConfirmation = faker.internet.password();
   });
 
   setUp(() {
@@ -165,5 +167,50 @@ void main() {
 
     sut.validatePassword(password);
     sut.validatePassword(password);
+  });
+
+  test('Should call Validation with correct passwordConfirmation', () {
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    verify(() => validation.validate(
+        field: 'passwordConfirmation', value: passwordConfirmation)).called(1);
+  });
+
+  test('Should emit invalidFieldError if passwordConfirmation is invalid', () {
+    mockValidation(value: ValidationError.invalidField);
+
+    // Aqui eu garanto que o listen só execute uma vez caso o valor anterior seja o mesmo.
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.invalidField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    // Mesmo validando duas vezes com o mesmo valor, a stream só emite um.
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+  });
+
+  test('Should emit requiredFieldError if passwordConfirmation is empty', () {
+    mockValidation(value: ValidationError.requiredField);
+
+    // Aqui eu garanto que o listen só execute uma vez caso o valor anterior seja o mesmo.
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, UIError.requiredField)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    // Mesmo validando duas vezes com o mesmo valor, a stream só emite um.
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+  });
+
+  test('Should emit null if passwordConfirmation validation succeeds', () {
+    sut.passwordConfirmationErrorStream
+        .listen(expectAsync1((error) => expect(error, null)));
+    sut.isFormValidStream
+        .listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    sut.validatePasswordConfirmation(passwordConfirmation);
+    sut.validatePasswordConfirmation(passwordConfirmation);
   });
 }
