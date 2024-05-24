@@ -39,6 +39,9 @@ class StreamSignUpPresenter {
   StreamController<UIError>? _controllerMainError =
       StreamController<UIError>.broadcast();
 
+  StreamController<String>? _controllerNavigateTo =
+      StreamController<String>.broadcast();
+
   final _state = SignUpState();
 
   // O distinct garante a emissão de valores diferentes do último
@@ -59,6 +62,9 @@ class StreamSignUpPresenter {
   Stream<UIError> get mainErrorStream =>
       _controllerMainError!.stream.distinct();
 
+  Stream<String?> get navigateToStream =>
+      _controllerNavigateTo!.stream.distinct();
+
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
 
@@ -77,6 +83,10 @@ class StreamSignUpPresenter {
 
   void _updateError(UIError error) {
     _controllerMainError?.add(error);
+  }
+
+  void _updateNavigateTo(String route) {
+    _controllerNavigateTo?.add(route);
   }
 
   void validateName(String name) {
@@ -132,6 +142,7 @@ class StreamSignUpPresenter {
         ),
       );
       await saveCurrentAccount.save(account);
+      _updateNavigateTo('/surveys');
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emailInUse:
