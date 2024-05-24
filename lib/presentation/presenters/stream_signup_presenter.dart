@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../../domain/usecases/usecases.dart';
+import '../../domain/helpers/helpers.dart';
 
 import '../../ui/helpers/errors/ui_error.dart';
 import '../protocols/protocols.dart';
@@ -14,6 +15,7 @@ class SignUpState {
   String? email;
   String? password;
   String? passwordConfirmation;
+  bool isLoading = false;
 
   bool get isFormValid =>
       nameError == null &&
@@ -33,6 +35,10 @@ class StreamSignUpPresenter {
 
   StreamController<SignUpState>? _controller =
       StreamController<SignUpState>.broadcast();
+
+  StreamController<UIError>? _controllerMainError =
+      StreamController<UIError>.broadcast();
+
   final _state = SignUpState();
 
   // O distinct garante a emissão de valores diferentes do último
@@ -50,8 +56,14 @@ class StreamSignUpPresenter {
       .map((state) => state.passwordConfirmationError)
       .distinct();
 
+  Stream<UIError> get mainErrorStream =>
+      _controllerMainError!.stream.distinct();
+
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
+
+  Stream<bool> get isLoadingStream =>
+      _controller!.stream.map((state) => state.isLoading).distinct();
 
   StreamSignUpPresenter({
     required this.validation,
@@ -61,6 +73,10 @@ class StreamSignUpPresenter {
 
   void _update() {
     _controller?.add(_state);
+  }
+
+  void _updateError(UIError error) {
+    _controllerMainError?.add(error);
   }
 
   void validateName(String name) {
@@ -103,19 +119,35 @@ class StreamSignUpPresenter {
   }
 
   Future<void> signUp() async {
-    final account = await addAccount.add(
-      AddAccountParams(
-        name: _state.name!,
-        email: _state.email!,
-        password: _state.password!,
-        passwordConfirmation: _state.passwordConfirmation!,
-      ),
-    );
-    await saveCurrentAccount.save(account);
+    try {
+      _state.isLoading = true;
+      _update();
+
+      final account = await addAccount.add(
+        AddAccountParams(
+          name: _state.name!,
+          email: _state.email!,
+          password: _state.password!,
+          passwordConfirmation: _state.passwordConfirmation!,
+        ),
+      );
+      await saveCurrentAccount.save(account);
+    } on DomainError catch (error) {
+      switch (error) {
+        default:
+          _updateError(UIError.unexpected);
+      }
+
+      _state.isLoading = false;
+      _update();
+    }
   }
 
   void dispose() {
     _controller?.close();
     _controller = null;
+
+    _controllerMainError?.close();
+    _controllerMainError = null;
   }
 }
