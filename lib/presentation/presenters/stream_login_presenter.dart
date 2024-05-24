@@ -140,4 +140,9 @@ class StreamLoginPresenter implements LoginPresenter {
     _controllerNavigateTo?.close();
     _controllerNavigateTo = null;
   }
+
+  @override
+  void goToSignUp() {
+    _updateNavigateTo('/signup');
+  }
 }

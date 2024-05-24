@@ -99,4 +99,9 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
 
   @override
   void dispose() {}
+
+  @override
+  void goToSignUp() {
+    // TODO: implement goToSignUp
+  }
 }
