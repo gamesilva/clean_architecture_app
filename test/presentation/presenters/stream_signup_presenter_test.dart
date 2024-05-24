@@ -2,6 +2,9 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_architecture_app/domain/entities/entities.dart';
+import 'package:clean_architecture_app/domain/usecases/usecases.dart';
+
 import 'package:clean_architecture_app/ui/helpers/errors/errors.dart';
 
 import 'package:clean_architecture_app/presentation/presenters/presenters.dart';
@@ -9,13 +12,17 @@ import 'package:clean_architecture_app/presentation/protocols/protocols.dart';
 
 class ValidationSpy extends Mock implements Validation {}
 
+class AddAccountSpy extends Mock implements AddAccount {}
+
 void main() {
   late Validation validation;
   late StreamSignUpPresenter sut;
+  late AddAccount addAccount;
   late String name;
   late String email;
   late String password;
   late String passwordConfirmation;
+  late String token;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
       field: field ?? any(named: 'field'), value: any(named: 'value')));
@@ -23,20 +30,37 @@ void main() {
   void mockValidation({String? field, ValidationError? value}) =>
       mockValidationCall(field).thenReturn(value);
 
+  When mockAddAccountCall() =>
+      when(() => addAccount.add(any<AddAccountParams>()));
+
+  void mockAddAccount() =>
+      mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
+
   setUpAll(() {
     name = faker.person.name();
     email = faker.internet.email();
     password = faker.internet.password();
     passwordConfirmation = faker.internet.password();
+    token = faker.guid.guid();
+
+    registerFallbackValue(AddAccountParams(
+      name: name,
+      email: email,
+      password: password,
+      passwordConfirmation: passwordConfirmation,
+    ));
   });
 
   setUp(() {
     validation = ValidationSpy();
+    addAccount = AddAccountSpy();
     sut = StreamSignUpPresenter(
       validation: validation,
+      addAccount: addAccount,
     );
 
     mockValidation();
+    mockAddAccount();
   });
   test('Should call Validation with correct email', () {
     sut.validateEmail(email);
@@ -225,5 +249,23 @@ void main() {
     await Future.delayed(Duration.zero);
     sut.validatePasswordConfirmation(passwordConfirmation);
     await Future.delayed(Duration.zero);
+  });
+
+  test('Should call AddAccount with correct values.', () async {
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    await sut.signUp();
+
+    verify(() => addAccount.add(
+          AddAccountParams(
+            name: name,
+            email: email,
+            password: password,
+            passwordConfirmation: passwordConfirmation,
+          ),
+        )).called(1);
   });
 }
