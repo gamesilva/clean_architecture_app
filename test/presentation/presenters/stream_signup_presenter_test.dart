@@ -283,6 +283,25 @@ void main() {
         )).called(1);
   });
 
+  test('Should not emit after dispose', () async {
+    mockSaveCurrentAccountError();
+
+    expectLater(sut.nameErrorStream, neverEmits(null));
+    expectLater(sut.emailErrorStream, neverEmits(null));
+    expectLater(sut.passwordErrorStream, neverEmits(null));
+    expectLater(sut.passwordConfirmationErrorStream, neverEmits(null));
+    expectLater(sut.mainErrorStream, neverEmits(null));
+
+    sut.dispose();
+
+    sut.validateName(name);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+    sut.validatePasswordConfirmation(passwordConfirmation);
+
+    await sut.signUp();
+  });
+
   test('Should call SaveCurrentAccount with correct value.', () async {
     sut.validateName(name);
     sut.validateEmail(email);
