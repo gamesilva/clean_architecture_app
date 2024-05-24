@@ -134,6 +134,9 @@ class StreamSignUpPresenter {
       await saveCurrentAccount.save(account);
     } on DomainError catch (error) {
       switch (error) {
+        case DomainError.emailInUse:
+          _updateError(UIError.emailInUse);
+          break;
         default:
           _updateError(UIError.unexpected);
       }
