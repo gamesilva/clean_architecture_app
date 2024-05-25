@@ -4,6 +4,7 @@ import '../../domain/usecases/usecases.dart';
 import '../../domain/helpers/helpers.dart';
 
 import '../../ui/helpers/errors/ui_error.dart';
+import '../../ui/pages/pages.dart';
 import '../protocols/protocols.dart';
 
 class SignUpState {
@@ -28,7 +29,7 @@ class SignUpState {
       passwordConfirmation != null;
 }
 
-class StreamSignUpPresenter {
+class StreamSignUpPresenter implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
@@ -46,28 +47,36 @@ class StreamSignUpPresenter {
 
   // O distinct garante a emissão de valores diferentes do último
 
+  @override
   Stream<UIError?> get nameErrorStream =>
       _controller!.stream.map((state) => state.nameError).distinct();
 
+  @override
   Stream<UIError?> get emailErrorStream =>
       _controller!.stream.map((state) => state.emailError).distinct();
 
+  @override
   Stream<UIError?> get passwordErrorStream =>
       _controller!.stream.map((state) => state.passwordError).distinct();
 
+  @override
   Stream<UIError?> get passwordConfirmationErrorStream => _controller!.stream
       .map((state) => state.passwordConfirmationError)
       .distinct();
 
+  @override
   Stream<UIError> get mainErrorStream =>
       _controllerMainError!.stream.distinct();
 
+  @override
   Stream<String?> get navigateToStream =>
       _controllerNavigateTo!.stream.distinct();
 
+  @override
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
 
+  @override
   Stream<bool> get isLoadingStream =>
       _controller!.stream.map((state) => state.isLoading).distinct();
 
@@ -89,24 +98,28 @@ class StreamSignUpPresenter {
     _controllerNavigateTo?.add(route);
   }
 
+  @override
   void validateName(String name) {
     _state.name = name;
     _state.nameError = _validateField(field: 'name', value: name);
     _update();
   }
 
+  @override
   void validateEmail(String email) {
     _state.email = email;
     _state.emailError = _validateField(field: 'email', value: email);
     _update();
   }
 
+  @override
   void validatePassword(String password) {
     _state.password = password;
     _state.passwordError = _validateField(field: 'password', value: password);
     _update();
   }
 
+  @override
   void validatePasswordConfirmation(String passwordConfirmation) {
     _state.passwordConfirmation = passwordConfirmation;
     _state.passwordConfirmationError = _validateField(
@@ -128,6 +141,7 @@ class StreamSignUpPresenter {
     }
   }
 
+  @override
   Future<void> signUp() async {
     try {
       _state.isLoading = true;
@@ -157,11 +171,17 @@ class StreamSignUpPresenter {
     }
   }
 
+  @override
   void dispose() {
     _controller?.close();
     _controller = null;
 
     _controllerMainError?.close();
     _controllerMainError = null;
+  }
+
+  @override
+  void goToLogin() {
+    _updateNavigateTo('/login');
   }
 }
