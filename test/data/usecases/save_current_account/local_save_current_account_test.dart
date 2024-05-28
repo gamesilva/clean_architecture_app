@@ -30,8 +30,10 @@ void main() {
   test('Should call SaveCacheStorage with correct value', () async {
     sut.save(account);
 
-    verify(() =>
-        saveSecureChacheStorage.saveSecure(key: 'token', value: account.token));
+    verify(() => saveSecureChacheStorage.saveSecure(
+          key: 'token',
+          value: account.token!,
+        ));
   });
 
   test('Should throw UnexpectedError if SaveSecureChacheStorage throws',

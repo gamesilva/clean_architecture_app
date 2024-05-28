@@ -17,7 +17,7 @@ class StreamSplashPresenter implements SplashPresenter {
     await Future.delayed(Duration(seconds: durationInSeconds));
     try {
       final account = await loadCurrentAccount.load();
-      _navigateTo.add(account != null ? '/surveys' : '/login');
+      _navigateTo.add(account?.token == null ? '/login' : '/surveys');
     } catch (e) {
       _navigateTo.add('/login');
     }
