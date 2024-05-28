@@ -30,7 +30,7 @@ void main() {
   late String token;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
-      field: field ?? any(named: 'field'), value: any(named: 'value')));
+      field: field ?? any(named: 'field'), input: any(named: 'input')));
 
   void mockValidation({String? field, ValidationError? value}) =>
       mockValidationCall(field).thenReturn(value);
@@ -80,9 +80,19 @@ void main() {
     mockAddAccount();
   });
   test('Should call Validation with correct email', () {
+    final formData = {
+      'name': null,
+      'email': email,
+      'password': null,
+      'passwordConfirmation': null,
+    };
+
     sut.validateEmail(email);
 
-    verify(() => validation.validate(field: 'email', value: email)).called(1);
+    verify(() => validation.validate(
+          field: 'email',
+          input: formData,
+        )).called(1);
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
@@ -123,9 +133,16 @@ void main() {
   });
 
   test('Should call Validation with correct name', () {
+    final formData = {
+      'name': name,
+      'email': null,
+      'password': null,
+      'passwordConfirmation': null,
+    };
+
     sut.validateName(name);
 
-    verify(() => validation.validate(field: 'name', value: name)).called(1);
+    verify(() => validation.validate(field: 'name', input: formData)).called(1);
   });
 
   test('Should emit invalidFieldError if name is invalid', () {
@@ -166,9 +183,15 @@ void main() {
   });
 
   test('Should call Validation with correct password', () {
+    final formData = {
+      'name': null,
+      'email': null,
+      'password': password,
+      'passwordConfirmation': null,
+    };
     sut.validatePassword(password);
 
-    verify(() => validation.validate(field: 'password', value: password))
+    verify(() => validation.validate(field: 'password', input: formData))
         .called(1);
   });
 
@@ -211,10 +234,19 @@ void main() {
   });
 
   test('Should call Validation with correct passwordConfirmation', () {
+    final formData = {
+      'name': null,
+      'email': null,
+      'password': null,
+      'passwordConfirmation': passwordConfirmation,
+    };
+
     sut.validatePasswordConfirmation(passwordConfirmation);
 
     verify(() => validation.validate(
-        field: 'passwordConfirmation', value: passwordConfirmation)).called(1);
+          field: 'passwordConfirmation',
+          input: formData,
+        )).called(1);
   });
 
   test('Should emit invalidFieldError if passwordConfirmation is invalid', () {

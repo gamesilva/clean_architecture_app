@@ -29,7 +29,7 @@ void main() {
 
     validation2 = FieldValidationSpy();
     when(() => validation2.field).thenReturn('any_field');
-    mockValidation1(null);
+    mockValidation2(null);
 
     validation3 = FieldValidationSpy();
     when(() => validation3.field).thenReturn('any_field');
@@ -39,7 +39,10 @@ void main() {
   });
 
   test('Should return null if all validations returns null or empty', () {
-    final error = sut.validate(field: 'any_field', value: 'any_value');
+    final error = sut.validate(
+      field: 'any_field',
+      input: {'any_field': 'any_value'},
+    );
 
     expect(error, null);
   });
@@ -49,7 +52,10 @@ void main() {
     mockValidation2(ValidationError.requiredField);
     mockValidation3(ValidationError.invalidField);
 
-    final error = sut.validate(field: 'any_field', value: 'any_value');
+    final error = sut.validate(
+      field: 'any_field',
+      input: {'any_field': 'any_value'},
+    );
 
     expect(error, ValidationError.requiredField);
   });

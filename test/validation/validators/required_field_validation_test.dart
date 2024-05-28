@@ -11,14 +11,14 @@ void main() {
   });
 
   test('Should return null if value is not empty', () {
-    expect(sut.validate('any_field'), null);
+    expect(sut.validate({'any_field': 'any_field'}), null);
   });
 
   test('Should return error if value empty', () {
-    expect(sut.validate(''), ValidationError.requiredField);
+    expect(sut.validate({'any_field': ''}), ValidationError.requiredField);
   });
 
   test('Should return error if value null', () {
-    expect(sut.validate(null), ValidationError.requiredField);
+    expect(sut.validate({'any_field': null}), ValidationError.requiredField);
   });
 }

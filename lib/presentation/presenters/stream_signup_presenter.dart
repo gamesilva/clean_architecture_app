@@ -101,36 +101,40 @@ class StreamSignUpPresenter implements SignUpPresenter {
   @override
   void validateName(String name) {
     _state.name = name;
-    _state.nameError = _validateField(field: 'name', value: name);
+    _state.nameError = _validateField('name');
     _update();
   }
 
   @override
   void validateEmail(String email) {
     _state.email = email;
-    _state.emailError = _validateField(field: 'email', value: email);
+    _state.emailError = _validateField('email');
     _update();
   }
 
   @override
   void validatePassword(String password) {
     _state.password = password;
-    _state.passwordError = _validateField(field: 'password', value: password);
+    _state.passwordError = _validateField('password');
     _update();
   }
 
   @override
   void validatePasswordConfirmation(String passwordConfirmation) {
     _state.passwordConfirmation = passwordConfirmation;
-    _state.passwordConfirmationError = _validateField(
-      field: 'passwordConfirmation',
-      value: passwordConfirmation,
-    );
+    _state.passwordConfirmationError = _validateField('passwordConfirmation');
     _update();
   }
 
-  UIError? _validateField({required String field, required String value}) {
-    final error = validation.validate(field: field, value: value);
+  UIError? _validateField(String field) {
+    final formData = {
+      'name': _state.name,
+      'email': _state.email,
+      'password': _state.password,
+      'passwordConfirmation': _state.passwordConfirmation,
+    };
+
+    final error = validation.validate(field: field, input: formData);
     switch (error) {
       case ValidationError.invalidField:
         return UIError.invalidField;

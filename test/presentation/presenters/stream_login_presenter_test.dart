@@ -27,7 +27,7 @@ void main() {
   late String token;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
-      field: field ?? any(named: 'field'), value: any(named: 'value')));
+      field: field ?? any(named: 'field'), input: any(named: 'input')));
 
   void mockValidation({String? field, ValidationError? value}) =>
       mockValidationCall(field).thenReturn(value);
@@ -68,9 +68,14 @@ void main() {
     mockAuthentication();
   });
   test('Should call Validation with correct email', () {
+    final formData = {'email': email, 'password': null};
+
     sut.validateEmail(email);
 
-    verify(() => validation.validate(field: 'email', value: email)).called(1);
+    verify(() => validation.validate(
+          field: 'email',
+          input: formData,
+        )).called(1);
   });
 
   test('Should emit invalidFieldError if email is invalid', () {
@@ -111,9 +116,11 @@ void main() {
   });
 
   test('Should call Validation with correct password', () {
+    final formData = {'email': null, 'password': password};
+
     sut.validatePassword(password);
 
-    verify(() => validation.validate(field: 'password', value: password))
+    verify(() => validation.validate(field: 'password', input: formData))
         .called(1);
   });
 
