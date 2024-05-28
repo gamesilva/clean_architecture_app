@@ -29,8 +29,8 @@ class StreamLoginPresenter implements LoginPresenter {
       StreamController<LoginState>.broadcast();
   final _state = LoginState();
 
-  StreamController<UIError>? _controllerMainError =
-      StreamController<UIError>.broadcast();
+  StreamController<UIError?>? _controllerMainError =
+      StreamController<UIError?>.broadcast();
   StreamController<String>? _controllerNavigateTo =
       StreamController<String>.broadcast();
 
@@ -44,7 +44,7 @@ class StreamLoginPresenter implements LoginPresenter {
       _controller!.stream.map((state) => state.passwordError).distinct();
 
   @override
-  Stream<UIError> get mainErrorStream =>
+  Stream<UIError?> get mainErrorStream =>
       _controllerMainError!.stream.distinct();
 
   @override
@@ -69,7 +69,7 @@ class StreamLoginPresenter implements LoginPresenter {
     _controller?.add(_state);
   }
 
-  void _updateError(UIError error) {
+  void _updateError(UIError? error) {
     _controllerMainError?.add(error);
   }
 
@@ -111,6 +111,8 @@ class StreamLoginPresenter implements LoginPresenter {
   @override
   Future<void> auth() async {
     try {
+      _updateError(null);
+
       _state.isLoading = true;
       _update();
 

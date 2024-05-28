@@ -37,8 +37,8 @@ class StreamSignUpPresenter implements SignUpPresenter {
   StreamController<SignUpState>? _controller =
       StreamController<SignUpState>.broadcast();
 
-  StreamController<UIError>? _controllerMainError =
-      StreamController<UIError>.broadcast();
+  StreamController<UIError?>? _controllerMainError =
+      StreamController<UIError?>.broadcast();
 
   StreamController<String>? _controllerNavigateTo =
       StreamController<String>.broadcast();
@@ -65,7 +65,7 @@ class StreamSignUpPresenter implements SignUpPresenter {
       .distinct();
 
   @override
-  Stream<UIError> get mainErrorStream =>
+  Stream<UIError?> get mainErrorStream =>
       _controllerMainError!.stream.distinct();
 
   @override
@@ -90,7 +90,7 @@ class StreamSignUpPresenter implements SignUpPresenter {
     _controller?.add(_state);
   }
 
-  void _updateError(UIError error) {
+  void _updateError(UIError? error) {
     _controllerMainError?.add(error);
   }
 
@@ -148,6 +148,8 @@ class StreamSignUpPresenter implements SignUpPresenter {
   @override
   Future<void> signUp() async {
     try {
+      _updateError(null);
+
       _state.isLoading = true;
       _update();
 
