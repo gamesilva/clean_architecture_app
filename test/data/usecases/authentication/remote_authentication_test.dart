@@ -8,7 +8,7 @@ import 'package:clean_architecture_app/domain/usecases/usecases.dart';
 import 'package:clean_architecture_app/data/usecases/usecases.dart';
 import 'package:clean_architecture_app/data/http/http.dart';
 
-class HttpClientSpy extends Mock implements HttpClient {}
+class HttpClientSpy extends Mock implements HttpClient<Map> {}
 
 // The structure of the test is Triple A (Arrange, Act, Assert);
 void main() {

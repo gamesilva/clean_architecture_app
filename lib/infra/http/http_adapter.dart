@@ -4,13 +4,13 @@ import 'package:http/http.dart';
 
 import '../../data/http/http.dart';
 
-class HttpAdapter implements HttpClient {
+class HttpAdapter<T> implements HttpClient<T> {
   final Client client;
 
   HttpAdapter(this.client);
 
   @override
-  Future<Map?>? request({
+  Future<T?>? request({
     required String? url,
     required String? method,
     Map? body,
@@ -38,7 +38,7 @@ class HttpAdapter implements HttpClient {
     return _handleResponse(response);
   }
 
-  Map? _handleResponse(Response response) {
+  T? _handleResponse(Response response) {
     if (response.statusCode == 200) {
       return response.body.isEmpty ? null : jsonDecode(response.body);
     } else if (response.statusCode == 204) {
