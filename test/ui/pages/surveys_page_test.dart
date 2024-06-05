@@ -7,9 +7,10 @@ import 'package:mocktail/mocktail.dart';
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 
 void main() {
-  testWidgets('Should call LoadSurveys on page load',
-      (WidgetTester tester) async {
-    final presenter = SurveysPresenterSpy();
+  late SurveysPresenter presenter;
+
+  Future<void> loadPage(WidgetTester tester) async {
+    presenter = SurveysPresenterSpy();
     final surveysPage = GetMaterialApp(
       initialRoute: '/surveys',
       getPages: [
@@ -22,7 +23,20 @@ void main() {
       ],
     );
     await tester.pumpWidget(surveysPage);
+  }
 
+  testWidgets('Should call LoadSurveys on page load',
+      (WidgetTester tester) async {
+    await loadPage(tester);
     verify(() => presenter.loadData()).called(1);
+  });
+
+  testWidgets('Should handle loading correctly', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    // isLoadingController.add(true);
+    // await tester.pump();
+
+    // expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 }
