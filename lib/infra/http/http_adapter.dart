@@ -30,6 +30,11 @@ class HttpAdapter<T> implements HttpClient<T> {
           headers: headers,
           body: jsonBody,
         );
+      } else {
+        response = await client.get(
+          Uri.parse(url!),
+          headers: headers,
+        );
       }
     } catch (e) {
       throw (HttpError.serverError);
