@@ -247,5 +247,12 @@ void main() {
 
       expect(future, throwsA(HttpError.serverError));
     });
+
+    test('Should return ServerError if get throws', () async {
+      mockError();
+      final future = sut.request(url: url, method: 'GET');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
   });
 }
