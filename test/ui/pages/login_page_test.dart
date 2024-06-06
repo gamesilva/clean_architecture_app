@@ -20,7 +20,7 @@ void main() {
   late StreamController<UIError?> mainErrorController;
   late StreamController<String?> navigateToController;
   late StreamController<bool> isFormValidController;
-  late StreamController<bool> isLoadingController;
+  late StreamController<bool?> isLoadingController;
 
   void initStreams() {
     emailErrorController = StreamController<UIError?>();
@@ -28,7 +28,7 @@ void main() {
     mainErrorController = StreamController<UIError?>();
     navigateToController = StreamController<String?>();
     isFormValidController = StreamController<bool>();
-    isLoadingController = StreamController<bool>();
+    isLoadingController = StreamController<bool?>();
   }
 
   void mockStreams() {
@@ -233,23 +233,23 @@ void main() {
     verify(() => presenter.auth()).called(1);
   });
 
-  testWidgets('Should present loading', (WidgetTester tester) async {
+  testWidgets('Should handle loading correctly', (WidgetTester tester) async {
     await loadPage(tester);
 
     isLoadingController.add(true);
     await tester.pump();
-
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  });
 
-  testWidgets('Should hide loading', (WidgetTester tester) async {
-    await loadPage(tester);
-
-    isLoadingController.add(true); // Abrindo o loading
+    isLoadingController.add(false);
     await tester.pump();
-    isLoadingController.add(false); // Fechando o loading
-    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsNothing);
 
+    isLoadingController.add(true);
+    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    isLoadingController.add(null);
+    await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 

@@ -32,7 +32,11 @@ class _SignUpPage extends State<SignUpPage> {
       body: Builder(
         builder: ((context) {
           widget.presenter?.isLoadingStream.listen((isLoading) {
-            isLoading ? showLoading(context) : hideLoading(context);
+            if (isLoading == true) {
+              showLoading(context);
+            } else {
+              hideLoading(context);
+            }
           });
 
           widget.presenter?.mainErrorStream.listen((UIError? error) {
