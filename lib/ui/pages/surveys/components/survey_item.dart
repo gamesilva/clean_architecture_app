@@ -1,6 +1,10 @@
+import 'package:clean_architecture_app/ui/pages/pages.dart';
 import 'package:flutter/material.dart';
 
 class SurveyItem extends StatelessWidget {
+  final SurveyViewModel viewModel;
+
+  SurveyItem(this.viewModel);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,8 +25,8 @@ class SurveyItem extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
+          children: [
+            const Text(
               '13 Ago 2024',
               style: TextStyle(
                 color: Colors.white,
@@ -30,10 +34,10 @@ class SurveyItem extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
-              'Qual é seu framwork web favorito?',
-              style: TextStyle(
+              viewModel.question,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
               ),

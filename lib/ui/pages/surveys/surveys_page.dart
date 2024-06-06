@@ -30,34 +30,38 @@ class SurveysPage extends StatelessWidget {
           }
         });
         return StreamBuilder<List<SurveyViewModel>>(
-            stream: presenter?.loadSurveysStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Column(
-                  children: [
-                    Text(snapshot.error.toString()),
-                    RaisedButton(
-                      child: Text(R.strings.reload),
-                      onPressed: null,
-                    )
-                  ],
-                );
-              }
+          stream: presenter?.loadSurveysStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Column(
+                children: [
+                  Text(snapshot.error.toString()),
+                  RaisedButton(
+                    child: Text(R.strings.reload),
+                    onPressed: null,
+                  )
+                ],
+              );
+            }
+
+            if (snapshot.hasData) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: CarouselSlider(
-                  items: [
-                    SurveyItem(),
-                    SurveyItem(),
-                    SurveyItem(),
-                  ],
+                  items: snapshot.data!
+                      .map((viewModel) => SurveyItem(viewModel))
+                      .toList(),
                   options: CarouselOptions(
                     enlargeCenterPage: true,
                     aspectRatio: 1,
                   ),
                 ),
               );
-            });
+            }
+
+            return const SizedBox(height: 0);
+          },
+        );
       }),
     );
   }
