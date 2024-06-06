@@ -38,6 +38,9 @@ class PtBr implements Translations {
   String get password => 'Senha';
 
   @override
+  String get reload => 'Recarregar';
+
+  @override
   String get surveys => 'Enquetes';
 
   @override
