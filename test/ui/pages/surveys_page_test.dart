@@ -24,7 +24,7 @@ void main() {
     when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
 
-    when(() => presenter.loadSurveysStream)
+    when(() => presenter.surveysStream)
         .thenAnswer((_) => loadSurveysController.stream);
   }
 
