@@ -29,7 +29,7 @@ class SurveysPage extends StatelessWidget {
             hideLoading(context);
           }
         });
-        return StreamBuilder<List<SurveyViewModel>>(
+        return StreamBuilder<List<SurveyViewModel>?>(
           stream: presenter?.surveysStream,
           builder: (context, snapshot) {
             if (snapshot.hasError) {

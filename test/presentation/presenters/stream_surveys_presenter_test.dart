@@ -59,7 +59,7 @@ void main() {
 
     sut.surveysStream.listen(expectAsync1((surveys) => expect(surveys, [
           SurveyViewModel(
-            id: surveys[0].id,
+            id: surveys![0].id,
             question: surveys[0].question,
             date: '20 Feb 2020',
             didAnswer: surveys[0].didAnswer,
@@ -85,6 +85,16 @@ void main() {
               error,
               UIError.unexpected.description,
             )));
+
+    await sut.loadData();
+  });
+
+  test('Should not emit after dispose', () async {
+    mockLoadSurveysError();
+
+    expectLater(sut.surveysStream, neverEmits(null));
+
+    sut.dispose();
 
     await sut.loadData();
   });

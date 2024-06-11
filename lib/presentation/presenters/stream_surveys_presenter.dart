@@ -11,24 +11,24 @@ import '../../ui/pages/pages.dart';
 class StreamSurveysPresenter implements SurveysPresenter {
   final LoadSurveys loadSurveys;
 
-  final StreamController<bool> _isLoading = StreamController<bool>();
-  final StreamController<List<SurveyViewModel>> _surveys =
+  StreamController<bool?>? _isLoading = StreamController<bool>();
+  StreamController<List<SurveyViewModel>?>? _surveys =
       StreamController<List<SurveyViewModel>>();
 
   @override
-  Stream<bool> get isLoadingStream => _isLoading.stream;
+  Stream<bool?> get isLoadingStream => _isLoading!.stream;
 
   @override
-  Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
+  Stream<List<SurveyViewModel>?> get surveysStream => _surveys!.stream;
 
   StreamSurveysPresenter({required this.loadSurveys});
 
   void _updateIsLoding(bool isLoading) {
-    _isLoading.add(isLoading);
+    _isLoading?.add(isLoading);
   }
 
   void _updateSurveys(List<SurveyViewModel> surveys) {
-    _surveys.add(surveys);
+    _surveys?.add(surveys);
   }
 
   @override
@@ -47,9 +47,18 @@ class StreamSurveysPresenter implements SurveysPresenter {
           .toList();
       _updateSurveys(surveysViewModel);
     } on DomainError {
-      _surveys.addError(UIError.unexpected.description);
+      _surveys?.addError(UIError.unexpected.description);
     } finally {
       _updateIsLoding(false);
     }
+  }
+
+  @override
+  void dispose() {
+    _isLoading?.close();
+    _isLoading = null;
+
+    _surveys?.close();
+    _surveys = null;
   }
 }
