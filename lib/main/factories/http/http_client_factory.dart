@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 import '../../../data/http/http.dart';
 import '../../../infra/http/http.dart';
 
-HttpClient<ReturnType> makeHttpAdapter<ReturnType>() {
+HttpClient makeHttpAdapter() {
   final client = Client();
-  return HttpAdapter<ReturnType>(client);
+  return HttpAdapter(client);
 }

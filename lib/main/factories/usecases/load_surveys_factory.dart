@@ -2,9 +2,9 @@ import '../../../data/usecases/usecases.dart';
 import '../../../domain/usecases/usecases.dart';
 import '../factories.dart';
 
-AddAccount makeRemoteAddAccount() {
-  return RemoteAddAccount(
+LoadSurveys makeRemoteLoadSurveys() {
+  return RemoteLoadSurveys(
     httpClient: makeHttpAdapter(),
-    url: makeApiUrl('signup'),
+    url: makeApiUrl('surveys'),
   );
 }

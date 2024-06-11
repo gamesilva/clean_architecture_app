@@ -8,16 +8,18 @@ import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../../ui/pages/pages.dart';
 
-class StreamSurveysPresenter {
+class StreamSurveysPresenter implements SurveysPresenter {
   final LoadSurveys loadSurveys;
 
   final StreamController<bool> _isLoading = StreamController<bool>();
   final StreamController<List<SurveyViewModel>> _surveys =
       StreamController<List<SurveyViewModel>>();
 
+  @override
   Stream<bool> get isLoadingStream => _isLoading.stream;
 
-  Stream<List<SurveyViewModel>> get surveyStream => _surveys.stream;
+  @override
+  Stream<List<SurveyViewModel>> get surveysStream => _surveys.stream;
 
   StreamSurveysPresenter({required this.loadSurveys});
 
@@ -29,6 +31,7 @@ class StreamSurveysPresenter {
     _surveys.add(surveys);
   }
 
+  @override
   Future<void>? loadData() async {
     try {
       _updateIsLoding(true);

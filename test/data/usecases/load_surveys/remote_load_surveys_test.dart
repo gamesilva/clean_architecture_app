@@ -9,7 +9,7 @@ import 'package:clean_architecture_app/domain/helpers/helpers.dart';
 
 import 'package:clean_architecture_app/data/http/http.dart';
 
-class HttpClientSpy extends Mock implements HttpClient<List<Map>> {}
+class HttpClientSpy extends Mock implements HttpClient {}
 
 void main() {
   late RemoteLoadSurveys sut;

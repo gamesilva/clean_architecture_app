@@ -4,13 +4,13 @@ import 'package:http/http.dart';
 
 import '../../data/http/http.dart';
 
-class HttpAdapter<ReturnType> implements HttpClient<ReturnType> {
+class HttpAdapter implements HttpClient {
   final Client client;
 
   HttpAdapter(this.client);
 
   @override
-  Future<ReturnType?>? request({
+  Future<dynamic>? request({
     required String? url,
     required String? method,
     Map? body,
@@ -43,7 +43,7 @@ class HttpAdapter<ReturnType> implements HttpClient<ReturnType> {
     return _handleResponse(response);
   }
 
-  ReturnType? _handleResponse(Response response) {
+  dynamic _handleResponse(Response response) {
     if (response.statusCode == 200) {
       return response.body.isEmpty ? null : jsonDecode(response.body);
     } else if (response.statusCode == 204) {
