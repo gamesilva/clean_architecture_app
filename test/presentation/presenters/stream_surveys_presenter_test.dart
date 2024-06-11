@@ -15,10 +15,15 @@ class StreamSurveysPresenter {
 class LoadSurveysSpy extends Mock implements LoadSurveys {}
 
 void main() {
-  test('Should call LoadSurveys on loadData', () async {
-    final loadSurveys = LoadSurveysSpy();
-    final sut = StreamSurveysPresenter(loadSurveys: loadSurveys);
+  late LoadSurveysSpy loadSurveys;
+  late StreamSurveysPresenter sut;
 
+  setUp(() {
+    loadSurveys = LoadSurveysSpy();
+    sut = StreamSurveysPresenter(loadSurveys: loadSurveys);
+  });
+
+  test('Should call LoadSurveys on loadData', () async {
     await sut.loadData();
 
     verify(() => loadSurveys.load()).called(1);
