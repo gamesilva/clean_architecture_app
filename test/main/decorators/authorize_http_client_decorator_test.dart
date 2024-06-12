@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'package:clean_architecture_app/data/cache/cache.dart';
 import 'package:clean_architecture_app/data/http/http.dart';
 
-class AuthorizeHttpClientDecorator {
+class AuthorizeHttpClientDecorator implements HttpClient {
   final FetchSecureCacheStorage fetchSecureCacheStorage;
   final HttpClient decoratee;
 
@@ -14,7 +14,8 @@ class AuthorizeHttpClientDecorator {
     required this.fetchSecureCacheStorage,
   });
 
-  Future<void> request({
+  @override
+  Future<dynamic> request({
     required String? url,
     required String? method,
     Map? body,
@@ -23,7 +24,7 @@ class AuthorizeHttpClientDecorator {
     final token = await fetchSecureCacheStorage.fetchSecure('token');
     final authorizedHeaders = headers ?? {}
       ..addAll({'x-access-key': token});
-    await decoratee.request(
+    return await decoratee.request(
       url: url,
       method: method,
       body: body,
@@ -44,13 +45,24 @@ void main() {
 
   late String url;
   late String method;
-  late String token;
   late Map body;
+  late String token;
+  late String httpResponse;
 
   void mockToken() {
     token = faker.guid.guid();
     when(() => fetchSecureCacheStorage.fetchSecure(any()))
         .thenAnswer((_) async => token);
+  }
+
+  void mockHttpResponse() {
+    httpResponse = faker.randomGenerator.string(50);
+    when(() => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+          headers: any(named: 'headers'),
+        )).thenAnswer((_) async => httpResponse);
   }
 
   setUp(() {
@@ -66,6 +78,7 @@ void main() {
     body = {'any_key': 'any_value'};
 
     mockToken();
+    mockHttpResponse();
   });
 
   test('Should call FetchSecureCacheStorage with correct key', () async {
@@ -94,5 +107,11 @@ void main() {
           body: body,
           headers: {'x-access-key': token, 'any_header': 'any_value'},
         )).called(1);
+  });
+
+  test('Should return same result as decoratee', () async {
+    final response = await sut.request(url: url, method: method, body: body);
+
+    expect(response, httpResponse);
   });
 }
