@@ -13,7 +13,7 @@ void main() {
   late ClientSpy client;
   late String url;
   late Uri uri;
-  late Map<String, String> headers;
+  late Map<String, String> defaultHeaders;
 
   setUpAll(() {
     url = faker.internet.httpUrl();
@@ -25,7 +25,7 @@ void main() {
     sut = HttpAdapter(client);
     url = faker.internet.httpUrl();
     uri = Uri.parse(url);
-    headers = {
+    defaultHeaders = {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
@@ -63,8 +63,23 @@ void main() {
         body: {"any_key": "any_value"},
       );
 
-      verify(() =>
-          client.post(uri, headers: headers, body: '{"any_key":"any_value"}'));
+      verify(() => client.post(uri,
+          headers: defaultHeaders, body: '{"any_key":"any_value"}'));
+
+      await sut.request(
+        url: url,
+        method: 'POST',
+        body: {"any_key": "any_value"},
+        headers: {'any_header': 'any_value'},
+      );
+
+      verify(() => client.post(uri,
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+            'any_header': 'any_value',
+          },
+          body: '{"any_key":"any_value"}'));
     });
 
     test('Should call POST without body', () async {
@@ -174,8 +189,22 @@ void main() {
 
     test('Should call GET with correct value', () async {
       await sut.request(url: url, method: 'GET');
+      verify(() => client.get(uri, headers: defaultHeaders));
 
-      verify(() => client.get(uri, headers: headers));
+      await sut.request(
+        url: url,
+        method: 'GET',
+        headers: {'any_header': 'any_value'},
+      );
+
+      verify(() => client.get(
+            uri,
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+              'any_header': 'any_value',
+            },
+          ));
     });
 
     test('Should return data if get returns 200', () async {

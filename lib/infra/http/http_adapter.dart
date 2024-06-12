@@ -14,11 +14,13 @@ class HttpAdapter implements HttpClient {
     required String? url,
     required String? method,
     Map? body,
+    Map? headers,
   }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json',
-    };
+    final defaultHeaders = headers?.cast<String, String>() ?? {}
+      ..addAll({
+        'content-type': 'application/json',
+        'accept': 'application/json',
+      });
 
     final jsonBody = body != null ? jsonEncode(body) : null;
     var response = Response('', 500);
@@ -27,13 +29,13 @@ class HttpAdapter implements HttpClient {
       if (method == 'POST') {
         response = await client.post(
           Uri.parse(url!),
-          headers: headers,
+          headers: defaultHeaders,
           body: jsonBody,
         );
       } else {
         response = await client.get(
           Uri.parse(url!),
-          headers: headers,
+          headers: defaultHeaders,
         );
       }
     } catch (e) {
