@@ -25,4 +25,8 @@ class LocalLoadSurveys implements LoadSurveys {
       throw DomainError.unexpected;
     }
   }
+
+  Future<void>? validate() async {
+    await fetchCacheStorage.fetch('surveys');
+  }
 }
