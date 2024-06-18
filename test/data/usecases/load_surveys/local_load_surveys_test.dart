@@ -2,6 +2,7 @@ import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:clean_architecture_app/data/cache/cache.dart';
 import 'package:clean_architecture_app/data/models/models.dart';
 
 import 'package:clean_architecture_app/domain/entities/survey_entity.dart';
@@ -29,10 +30,6 @@ class LocalLoadSurveys {
 }
 
 class FetchCacheStorageSpy extends Mock implements FetchCacheStorage {}
-
-abstract class FetchCacheStorage {
-  Future<dynamic>? fetch(String key) async {}
-}
 
 void main() {
   late FetchCacheStorage fetchCacheStorage;
