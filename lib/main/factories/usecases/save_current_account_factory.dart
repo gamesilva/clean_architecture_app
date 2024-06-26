@@ -4,6 +4,6 @@ import '../factories.dart';
 
 SaveCurrentAccount makeLocalSaveCurrentAccount() {
   return LocalSaveCurrentAccount(
-    saveSecureChacheStorage: makeLocalStorageAdapter(),
+    saveSecureChacheStorage: makeSecureStorageAdapter(),
   );
 }
