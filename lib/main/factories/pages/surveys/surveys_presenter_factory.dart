@@ -4,6 +4,6 @@ import '../../factories.dart';
 
 SurveysPresenter makeStreamSurveysPresenter() {
   return StreamSurveysPresenter(
-    loadSurveys: makeRemoteLoadSurveys(),
+    loadSurveys: makeRemoteLoadSurveysWithLocalFallback(),
   );
 }
