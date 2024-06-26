@@ -57,5 +57,12 @@ void main() {
 
       verify(() => localStorage.deleteItem(key)).called(1);
     });
+
+    test('Should throw if deleteItem throws', () async {
+      mockDeleteError();
+      final future = sut.delete(key);
+
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
   });
 }
