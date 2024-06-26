@@ -5,33 +5,7 @@ import 'package:test/test.dart';
 import 'package:clean_architecture_app/data/usecases/usecases.dart';
 import 'package:clean_architecture_app/domain/entities/entities.dart';
 import 'package:clean_architecture_app/domain/helpers/helpers.dart';
-import 'package:clean_architecture_app/domain/usecases/usecases.dart';
-
-class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
-  final RemoteLoadSurveys remote;
-  final LocalLoadSurveys local;
-
-  RemoteLoadSurveysWithLocalFallback({
-    required this.remote,
-    required this.local,
-  });
-
-  @override
-  Future<List<SurveyEntity>?>? load() async {
-    try {
-      final surveys = await remote.load();
-      await local.save(surveys);
-      return surveys;
-    } catch (error) {
-      if (error == DomainError.accessDenied) {
-        rethrow;
-      }
-
-      await local.validate();
-      return await local.load();
-    }
-  }
-}
+import 'package:clean_architecture_app/main/composites/composites.dart';
 
 class RemoteLoadSurveysSpy extends Mock implements RemoteLoadSurveys {}
 
