@@ -92,4 +92,17 @@ void main() {
     expect(find.text('Algo errado aconteceu. Tente novamente'), findsOneWidget);
     expect(find.text('Recarregar'), findsOneWidget);
   });
+
+  testWidgets('Should call LoadSurveyResult on reload button click',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.addError(UIError.unexpected.description);
+    await tester.pump();
+
+    await tester.tap(find.text('Recarregar'));
+
+    // Aqui o called é 2 pq a primeira chamada é realizada assim que a tela abre
+    verify(() => presenter.loadData()).called(2);
+  });
 }
