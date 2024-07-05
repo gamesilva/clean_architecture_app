@@ -14,11 +14,11 @@ class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 void main() {
   late SurveyResultPresenter presenter;
   late StreamController<bool?> isLoadingController;
-  late StreamController<dynamic> surveyResultController;
+  late StreamController<SurveyResultViewModel> surveyResultController;
 
   void initStreams() {
     isLoadingController = StreamController<bool?>();
-    surveyResultController = StreamController<dynamic>();
+    surveyResultController = StreamController<SurveyResultViewModel>();
   }
 
   void mockStreams() {
@@ -54,6 +54,24 @@ void main() {
     }));
   }
 
+  SurveyResultViewModel makeSurveyResult() => SurveyResultViewModel(
+        surveyId: 'Any Id',
+        question: 'Question',
+        answers: [
+          SurveyAnswerViewModel(
+            image: 'Image 0',
+            answer: 'Answer 0',
+            isCurrentAnswer: true,
+            percent: '60%',
+          ),
+          SurveyAnswerViewModel(
+            answer: 'Answer 1',
+            isCurrentAnswer: false,
+            percent: '40%',
+          ),
+        ],
+      );
+
   tearDown((() => closeStreams()));
 
   testWidgets('Should call LoadSurveyResult on page load',
@@ -82,7 +100,7 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
-  testWidgets('Should present error if loadSurveysStream fails',
+  testWidgets('Should present error if surveyResultStream fails',
       (WidgetTester tester) async {
     await loadPage(tester);
 
@@ -91,6 +109,7 @@ void main() {
 
     expect(find.text('Algo errado aconteceu. Tente novamente'), findsOneWidget);
     expect(find.text('Recarregar'), findsOneWidget);
+    expect(find.text('Question'), findsNothing);
   });
 
   testWidgets('Should call LoadSurveyResult on reload button click',
@@ -104,5 +123,30 @@ void main() {
 
     // Aqui o called é 2 pq a primeira chamada é realizada assim que a tela abre
     verify(() => presenter.loadData()).called(2);
+  });
+
+  testWidgets('Should present valida data if surveyResultStream succeeds',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+
+    surveyResultController.add(makeSurveyResult());
+    await mockNetworkImagesFor((() async {
+      await tester.pump();
+    }));
+
+    expect(find.text('Algo errado aconteceu. Tente novamente'), findsNothing);
+    expect(find.text('Recarregar'), findsNothing);
+    expect(find.text('Question'), findsOneWidget);
+    expect(find.text('Answer 0'), findsOneWidget);
+    expect(find.text('Answer 1'), findsOneWidget);
+    expect(find.text('60%'), findsOneWidget);
+    expect(find.text('40%'), findsOneWidget);
+
+    expect(find.byType(ActiveIcon), findsOneWidget);
+    expect(find.byType(DisableIcon), findsOneWidget);
+
+    final image =
+        tester.widget<Image>(find.byType(Image)).image as NetworkImage;
+    expect(image.url, 'Image 0');
   });
 }
