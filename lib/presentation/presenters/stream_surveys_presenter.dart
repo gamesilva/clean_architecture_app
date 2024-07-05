@@ -14,12 +14,17 @@ class StreamSurveysPresenter implements SurveysPresenter {
   StreamController<bool?>? _isLoading = StreamController<bool>();
   StreamController<List<SurveyViewModel>?>? _surveys =
       StreamController<List<SurveyViewModel>>();
+  StreamController<String>? _controllerNavigateTo =
+      StreamController<String>.broadcast();
 
   @override
   Stream<bool?> get isLoadingStream => _isLoading!.stream;
 
   @override
   Stream<List<SurveyViewModel>?> get surveysStream => _surveys!.stream;
+
+  Stream<String?> get navigateToStream =>
+      _controllerNavigateTo!.stream.distinct();
 
   StreamSurveysPresenter({required this.loadSurveys});
 
@@ -29,6 +34,10 @@ class StreamSurveysPresenter implements SurveysPresenter {
 
   void _updateSurveys(List<SurveyViewModel> surveys) {
     _surveys?.add(surveys);
+  }
+
+  void _updateNavigateTo(String route) {
+    _controllerNavigateTo?.add(route);
   }
 
   @override
@@ -60,5 +69,13 @@ class StreamSurveysPresenter implements SurveysPresenter {
 
     _surveys?.close();
     _surveys = null;
+
+    _controllerNavigateTo?.close();
+    _controllerNavigateTo = null;
+  }
+
+  @override
+  void goToSurveyResult(String surveyId) {
+    _updateNavigateTo('/survey_result/$surveyId');
   }
 }
