@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import 'package:clean_architecture_app/ui/helpers/helpers.dart';
 import 'package:clean_architecture_app/ui/pages/pages.dart';
+import 'package:clean_architecture_app/ui/pages/survey_result/components/components.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 
