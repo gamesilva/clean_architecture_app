@@ -13,11 +13,13 @@ class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 void main() {
   late SurveysPresenter presenter;
   late StreamController<bool?> isLoadingController;
+  late StreamController<bool?> isSessionExpiredController;
   late StreamController<List<SurveyViewModel>> loadSurveysController;
   late StreamController<String?> navigateToController;
 
   void initStreams() {
     isLoadingController = StreamController<bool?>();
+    isSessionExpiredController = StreamController<bool?>();
     loadSurveysController = StreamController<List<SurveyViewModel>>();
     navigateToController = StreamController<String?>();
   }
@@ -25,6 +27,9 @@ void main() {
   void mockStreams() {
     when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
+
+    when(() => presenter.isSessionExpiredStream)
+        .thenAnswer((_) => isSessionExpiredController.stream);
 
     when(() => presenter.surveysStream)
         .thenAnswer((_) => loadSurveysController.stream);
@@ -35,6 +40,7 @@ void main() {
 
   void closeStreams() {
     isLoadingController.close();
+    isSessionExpiredController.close();
     loadSurveysController.close();
     navigateToController.close();
   }
@@ -58,6 +64,12 @@ void main() {
           name: '/any_route',
           page: () => const Scaffold(
             body: Text('Fake page'),
+          ),
+        ),
+        GetPage(
+          name: '/login',
+          page: () => const Scaffold(
+            body: Text('Fake login'),
           ),
         ),
       ],
@@ -170,5 +182,39 @@ void main() {
 
     expect(Get.currentRoute, '/any_route');
     expect(find.text('Fake page'), findsOneWidget);
+  });
+
+  testWidgets('Should not change page', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    navigateToController.add('');
+    await tester.pump();
+    expect(Get.currentRoute, '/surveys');
+
+    navigateToController.add(null);
+    await tester.pump();
+    expect(Get.currentRoute, '/surveys');
+  });
+
+  testWidgets('Should logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(true);
+    await tester.pumpAndSettle();
+
+    expect(Get.currentRoute, '/login');
+    expect(find.text('Fake login'), findsOneWidget);
+  });
+
+  testWidgets('Should not logout', (WidgetTester tester) async {
+    await loadPage(tester);
+
+    isSessionExpiredController.add(false);
+    await tester.pumpAndSettle();
+    expect(Get.currentRoute, '/surveys');
+
+    isSessionExpiredController.add(null);
+    await tester.pumpAndSettle();
+    expect(Get.currentRoute, '/surveys');
   });
 }

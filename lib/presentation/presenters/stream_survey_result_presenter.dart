@@ -10,11 +10,15 @@ class StreamSurveyResultPresenter implements SurveyResultPresenter {
   final String surveyId;
 
   StreamController<bool?>? _isLoading = StreamController<bool>();
+  StreamController<bool?>? _isSessionExpired = StreamController<bool>();
   StreamController<SurveyResultViewModel>? _surveyResult =
       StreamController<SurveyResultViewModel>();
 
   @override
   Stream<bool?> get isLoadingStream => _isLoading!.stream;
+
+  @override
+  Stream<bool?> get isSessionExpiredStream => _isSessionExpired!.stream;
 
   @override
   Stream<SurveyResultViewModel> get surveyResultStream => _surveyResult!.stream;
@@ -26,6 +30,10 @@ class StreamSurveyResultPresenter implements SurveyResultPresenter {
 
   void _updateIsLoding(bool isLoading) {
     _isLoading?.add(isLoading);
+  }
+
+  void _updateIsSessionExpired(bool isSessionExpired) {
+    _isSessionExpired?.add(isSessionExpired);
   }
 
   void _updateSurveyResult(SurveyResultViewModel surveyResult) {
@@ -56,8 +64,12 @@ class StreamSurveyResultPresenter implements SurveyResultPresenter {
             .toList(),
       );
       _updateSurveyResult(surveyResultViewModel);
-    } on DomainError {
-      _surveyResult?.addError(UIError.unexpected.description);
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        _updateIsSessionExpired(true);
+      } else {
+        _surveyResult?.addError(UIError.unexpected.description);
+      }
     } finally {
       _updateIsLoding(false);
     }
