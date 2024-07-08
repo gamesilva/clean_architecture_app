@@ -17,7 +17,7 @@ void main() {
   late String token;
 
   When mockFetchSecureCall() =>
-      when(() => fetchSecureCacheStorage.fetchSecure(any()));
+      when(() => fetchSecureCacheStorage.fetch(any()));
 
   void mockFetchSecure() =>
       mockFetchSecureCall().thenAnswer((_) async => token);
@@ -34,11 +34,11 @@ void main() {
     mockFetchSecure();
   });
 
-  // O método fetchSecure vai retornar null por causa da lib Mock
+  // O método fetch vai retornar null por causa da lib Mock
   // test('Should call FetchSecureCacheStorage with correct value', () async {
   //   await sut.load();
 
-  //   verify(() => fetchSecureCacheStorage.fetchSecure('token'));
+  //   verify(() => fetchSecureCacheStorage.fetch('token'));
   // });
 
   test('Should return an AccountEntity', () async {

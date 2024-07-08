@@ -23,14 +23,14 @@ void main() {
     );
   });
 
-  void mockError() => when(() => saveSecureChacheStorage.saveSecure(
+  void mockError() => when(() => saveSecureChacheStorage.save(
       key: any(named: 'key'),
       value: any(named: 'value'))).thenThrow(Exception());
 
   test('Should call SaveCacheStorage with correct value', () async {
     sut.save(account);
 
-    verify(() => saveSecureChacheStorage.saveSecure(
+    verify(() => saveSecureChacheStorage.save(
           key: 'token',
           value: account.token!,
         ));
