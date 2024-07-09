@@ -220,7 +220,6 @@ void main() {
 
     expectLater(sut.emailErrorStream, neverEmits(null));
     expectLater(sut.passwordErrorStream, neverEmits(null));
-    expectLater(sut.mainErrorStream, neverEmits(null));
 
     sut.dispose();
 

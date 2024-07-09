@@ -9,7 +9,7 @@ import '../protocols/protocols.dart';
 import '../mixins/mixins.dart';
 
 class StreamSignUpPresenter
-    with LoadingManager, FormManager, NavigationManager
+    with LoadingManager, FormManager, NavigationManager, UIErrorManager
     implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
@@ -37,12 +37,6 @@ class StreamSignUpPresenter
   StreamController<UIError?>? _passwordConfirmationError =
       StreamController<UIError?>.broadcast();
 
-  StreamController<UIError?>? _controllerMainError =
-      StreamController<UIError?>.broadcast();
-
-  // StreamController<String>? _controllerNavigateTo =
-  //     StreamController<String>.broadcast();
-
   // O distinct garante a emissão de valores diferentes do último
   @override
   Stream<UIError?> get nameErrorStream => _nameError!.stream.distinct();
@@ -57,27 +51,11 @@ class StreamSignUpPresenter
   Stream<UIError?> get passwordConfirmationErrorStream =>
       _passwordConfirmationError!.stream.distinct();
 
-  @override
-  Stream<UIError?> get mainErrorStream =>
-      _controllerMainError!.stream.distinct();
-
-  // @override
-  // Stream<String?> get navigateToStream =>
-  //     _controllerNavigateTo!.stream.distinct();
-
   StreamSignUpPresenter({
     required this.validation,
     required this.addAccount,
     required this.saveCurrentAccount,
   });
-
-  void _updateError(UIError? error) {
-    _controllerMainError?.add(error);
-  }
-
-  // void _updateNavigateTo(String route) {
-  //   _controllerNavigateTo?.add(route);
-  // }
 
   @override
   void validateName(String name) {
@@ -144,7 +122,7 @@ class StreamSignUpPresenter
   @override
   Future<void> signUp() async {
     try {
-      _updateError(null);
+      mainError = null;
 
       isLoading = true;
 
@@ -161,10 +139,10 @@ class StreamSignUpPresenter
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emailInUse:
-          _updateError(UIError.emailInUse);
+          mainError = UIError.emailInUse;
           break;
         default:
-          _updateError(UIError.unexpected);
+          mainError = UIError.unexpected;
       }
 
       isLoading = false;
@@ -184,9 +162,6 @@ class StreamSignUpPresenter
 
     _passwordConfirmationError?.close();
     _passwordConfirmationError = null;
-
-    _controllerMainError?.close();
-    _controllerMainError = null;
   }
 
   @override

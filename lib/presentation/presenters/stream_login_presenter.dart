@@ -8,7 +8,7 @@ import '../mixins/mixins.dart';
 import '../protocols/protocols.dart';
 
 class StreamLoginPresenter
-    with LoadingManager, FormManager, NavigationManager
+    with LoadingManager, FormManager, NavigationManager, UIErrorManager
     implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
@@ -20,14 +20,9 @@ class StreamLoginPresenter
   UIError? _emailErrorValue;
   UIError? _passwordErrorValue;
 
-  String? mainError;
-
   StreamController<UIError?>? _emailError =
       StreamController<UIError?>.broadcast();
   StreamController<UIError?>? _passwordError =
-      StreamController<UIError?>.broadcast();
-
-  StreamController<UIError?>? _controllerMainError =
       StreamController<UIError?>.broadcast();
 
   // O distinct garante a emissão de valores diferentes do último
@@ -37,19 +32,11 @@ class StreamLoginPresenter
   @override
   Stream<UIError?> get passwordErrorStream => _passwordError!.stream.distinct();
 
-  @override
-  Stream<UIError?> get mainErrorStream =>
-      _controllerMainError!.stream.distinct();
-
   StreamLoginPresenter({
     required this.validation,
     required this.authentication,
     required this.saveCurrentAccount,
   });
-
-  void _updateError(UIError? error) {
-    _controllerMainError?.add(error);
-  }
 
   @override
   void validateEmail(String email) {
@@ -94,8 +81,7 @@ class StreamLoginPresenter
   @override
   Future<void> auth() async {
     try {
-      _updateError(null);
-
+      mainError = null;
       isLoading = true;
 
       final account = await authentication.auth(
@@ -107,10 +93,10 @@ class StreamLoginPresenter
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.invalidCredentials:
-          _updateError(UIError.invalidCredentials);
+          mainError = UIError.invalidCredentials;
           break;
         default:
-          _updateError(UIError.unexpected);
+          mainError = UIError.unexpected;
       }
 
       isLoading = false;
@@ -124,9 +110,6 @@ class StreamLoginPresenter
 
     _passwordError?.close();
     _passwordError = null;
-
-    _controllerMainError?.close();
-    _controllerMainError = null;
   }
 
   @override
