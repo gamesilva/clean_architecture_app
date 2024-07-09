@@ -6,6 +6,7 @@ import '../../domain/helpers/helpers.dart';
 import '../../ui/helpers/errors/ui_error.dart';
 import '../../ui/pages/pages.dart';
 import '../protocols/protocols.dart';
+import '../mixins/mixins.dart';
 
 class SignUpState {
   UIError? emailError;
@@ -16,7 +17,6 @@ class SignUpState {
   String? email;
   String? password;
   String? passwordConfirmation;
-  bool isLoading = false;
 
   bool get isFormValid =>
       nameError == null &&
@@ -29,7 +29,7 @@ class SignUpState {
       passwordConfirmation != null;
 }
 
-class StreamSignUpPresenter implements SignUpPresenter {
+class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
@@ -75,10 +75,6 @@ class StreamSignUpPresenter implements SignUpPresenter {
   @override
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
-
-  @override
-  Stream<bool> get isLoadingStream =>
-      _controller!.stream.map((state) => state.isLoading).distinct();
 
   StreamSignUpPresenter({
     required this.validation,
@@ -150,8 +146,7 @@ class StreamSignUpPresenter implements SignUpPresenter {
     try {
       _updateError(null);
 
-      _state.isLoading = true;
-      _update();
+      isLoading = true;
 
       final account = await addAccount.add(
         AddAccountParams(
@@ -172,8 +167,7 @@ class StreamSignUpPresenter implements SignUpPresenter {
           _updateError(UIError.unexpected);
       }
 
-      _state.isLoading = false;
-      _update();
+      isLoading = false;
     }
   }
 

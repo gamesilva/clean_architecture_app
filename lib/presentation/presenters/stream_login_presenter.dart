@@ -4,6 +4,7 @@ import '../../domain/helpers/helpers.dart';
 import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/pages.dart';
 import '../../ui/helpers/errors/ui_error.dart';
+import '../mixins/mixins.dart';
 import '../protocols/protocols.dart';
 
 class LoginState {
@@ -12,7 +13,6 @@ class LoginState {
   String? password;
   UIError? passwordError;
   String? mainError;
-  bool isLoading = false;
 
   bool get isFormValid =>
       emailError == null &&
@@ -21,7 +21,7 @@ class LoginState {
       password != null;
 }
 
-class StreamLoginPresenter implements LoginPresenter {
+class StreamLoginPresenter with LoadingManager implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
   final SaveCurrentAccount saveCurrentAccount;
@@ -54,10 +54,6 @@ class StreamLoginPresenter implements LoginPresenter {
   @override
   Stream<bool> get isFormValidStream =>
       _controller!.stream.map((state) => state.isFormValid).distinct();
-
-  @override
-  Stream<bool> get isLoadingStream =>
-      _controller!.stream.map((state) => state.isLoading).distinct();
 
   StreamLoginPresenter({
     required this.validation,
@@ -113,8 +109,7 @@ class StreamLoginPresenter implements LoginPresenter {
     try {
       _updateError(null);
 
-      _state.isLoading = true;
-      _update();
+      isLoading = true;
 
       final account = await authentication.auth(
         AuthenticationParams(email: _state.email!, secret: _state.password!),
@@ -131,8 +126,7 @@ class StreamLoginPresenter implements LoginPresenter {
           _updateError(UIError.unexpected);
       }
 
-      _state.isLoading = false;
-      _update();
+      isLoading = false;
     }
   }
 

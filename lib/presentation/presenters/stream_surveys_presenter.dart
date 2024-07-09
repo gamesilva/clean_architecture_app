@@ -8,21 +8,18 @@ import '../../domain/usecases/usecases.dart';
 import '../../ui/helpers/helpers.dart';
 import '../../ui/pages/pages.dart';
 
-class StreamSurveysPresenter implements SurveysPresenter {
+import '../mixins/mixins.dart';
+
+class StreamSurveysPresenter
+    with SessionManager, LoadingManager
+    implements SurveysPresenter {
   final LoadSurveys loadSurveys;
 
-  StreamController<bool?>? _isLoading = StreamController<bool>();
-  StreamController<bool?>? _isSessionExpired = StreamController<bool>();
   StreamController<List<SurveyViewModel>?>? _surveys =
       StreamController<List<SurveyViewModel>>();
+
   StreamController<String>? _controllerNavigateTo =
       StreamController<String>.broadcast();
-
-  @override
-  Stream<bool?> get isLoadingStream => _isLoading!.stream;
-
-  @override
-  Stream<bool?> get isSessionExpiredStream => _isSessionExpired!.stream;
 
   @override
   Stream<List<SurveyViewModel>?> get surveysStream => _surveys!.stream;
@@ -31,14 +28,6 @@ class StreamSurveysPresenter implements SurveysPresenter {
       _controllerNavigateTo!.stream.distinct();
 
   StreamSurveysPresenter({required this.loadSurveys});
-
-  void _updateIsLoding(bool isLoading) {
-    _isLoading?.add(isLoading);
-  }
-
-  void _updateIsSessionExpired(bool isSessionExpired) {
-    _isSessionExpired?.add(isSessionExpired);
-  }
 
   void _updateSurveys(List<SurveyViewModel> surveys) {
     _surveys?.add(surveys);
@@ -51,7 +40,7 @@ class StreamSurveysPresenter implements SurveysPresenter {
   @override
   Future<void>? loadData() async {
     try {
-      _updateIsLoding(true);
+      isLoading = true;
 
       final surveys = await loadSurveys.load();
       final surveysViewModel = surveys!
@@ -65,20 +54,17 @@ class StreamSurveysPresenter implements SurveysPresenter {
       _updateSurveys(surveysViewModel);
     } on DomainError catch (error) {
       if (error == DomainError.accessDenied) {
-        _updateIsSessionExpired(true);
+        isSessionExpired = true;
       } else {
         _surveys?.addError(UIError.unexpected.description);
       }
     } finally {
-      _updateIsLoding(false);
+      isLoading = false;
     }
   }
 
   @override
   void dispose() {
-    _isLoading?.close();
-    _isLoading = null;
-
     _surveys?.close();
     _surveys = null;
 
