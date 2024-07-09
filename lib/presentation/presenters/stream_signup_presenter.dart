@@ -8,34 +8,34 @@ import '../../ui/pages/pages.dart';
 import '../protocols/protocols.dart';
 import '../mixins/mixins.dart';
 
-class SignUpState {
-  UIError? emailError;
-  UIError? nameError;
-  UIError? passwordError;
-  UIError? passwordConfirmationError;
-  String? name;
-  String? email;
-  String? password;
-  String? passwordConfirmation;
-
-  bool get isFormValid =>
-      nameError == null &&
-      emailError == null &&
-      passwordError == null &&
-      passwordConfirmationError == null &&
-      name != null &&
-      email != null &&
-      password != null &&
-      passwordConfirmation != null;
-}
-
-class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
+class StreamSignUpPresenter
+    with LoadingManager, FormManager
+    implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
   final SaveCurrentAccount saveCurrentAccount;
 
-  StreamController<SignUpState>? _controller =
-      StreamController<SignUpState>.broadcast();
+  String? _name;
+  String? _email;
+  String? _password;
+  String? _passwordConfirmation;
+
+  UIError? _emailErrorValue;
+  UIError? _nameErrorValue;
+  UIError? _passwordErrorValue;
+  UIError? _passwordConfirmationErrorValue;
+
+  StreamController<UIError?>? _emailError =
+      StreamController<UIError?>.broadcast();
+
+  StreamController<UIError?>? _nameError =
+      StreamController<UIError?>.broadcast();
+
+  StreamController<UIError?>? _passwordError =
+      StreamController<UIError?>.broadcast();
+
+  StreamController<UIError?>? _passwordConfirmationError =
+      StreamController<UIError?>.broadcast();
 
   StreamController<UIError?>? _controllerMainError =
       StreamController<UIError?>.broadcast();
@@ -43,26 +43,19 @@ class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
   StreamController<String>? _controllerNavigateTo =
       StreamController<String>.broadcast();
 
-  final _state = SignUpState();
-
   // O distinct garante a emissão de valores diferentes do último
+  @override
+  Stream<UIError?> get nameErrorStream => _nameError!.stream.distinct();
 
   @override
-  Stream<UIError?> get nameErrorStream =>
-      _controller!.stream.map((state) => state.nameError).distinct();
+  Stream<UIError?> get emailErrorStream => _emailError!.stream.distinct();
 
   @override
-  Stream<UIError?> get emailErrorStream =>
-      _controller!.stream.map((state) => state.emailError).distinct();
+  Stream<UIError?> get passwordErrorStream => _passwordError!.stream.distinct();
 
   @override
-  Stream<UIError?> get passwordErrorStream =>
-      _controller!.stream.map((state) => state.passwordError).distinct();
-
-  @override
-  Stream<UIError?> get passwordConfirmationErrorStream => _controller!.stream
-      .map((state) => state.passwordConfirmationError)
-      .distinct();
+  Stream<UIError?> get passwordConfirmationErrorStream =>
+      _passwordConfirmationError!.stream.distinct();
 
   @override
   Stream<UIError?> get mainErrorStream =>
@@ -72,19 +65,11 @@ class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
   Stream<String?> get navigateToStream =>
       _controllerNavigateTo!.stream.distinct();
 
-  @override
-  Stream<bool> get isFormValidStream =>
-      _controller!.stream.map((state) => state.isFormValid).distinct();
-
   StreamSignUpPresenter({
     required this.validation,
     required this.addAccount,
     required this.saveCurrentAccount,
   });
-
-  void _update() {
-    _controller?.add(_state);
-  }
 
   void _updateError(UIError? error) {
     _controllerMainError?.add(error);
@@ -96,38 +81,42 @@ class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
 
   @override
   void validateName(String name) {
-    _state.name = name;
-    _state.nameError = _validateField('name');
-    _update();
+    _name = name;
+    _nameErrorValue = _validateField('name');
+    _nameError?.add(_nameErrorValue);
+    _validateForm();
   }
 
   @override
   void validateEmail(String email) {
-    _state.email = email;
-    _state.emailError = _validateField('email');
-    _update();
+    _email = email;
+    _emailErrorValue = _validateField('email');
+    _emailError?.add(_emailErrorValue);
+    _validateForm();
   }
 
   @override
   void validatePassword(String password) {
-    _state.password = password;
-    _state.passwordError = _validateField('password');
-    _update();
+    _password = password;
+    _passwordErrorValue = _validateField('password');
+    _passwordError?.add(_passwordErrorValue);
+    _validateForm();
   }
 
   @override
   void validatePasswordConfirmation(String passwordConfirmation) {
-    _state.passwordConfirmation = passwordConfirmation;
-    _state.passwordConfirmationError = _validateField('passwordConfirmation');
-    _update();
+    _passwordConfirmation = passwordConfirmation;
+    _passwordConfirmationErrorValue = _validateField('passwordConfirmation');
+    _passwordConfirmationError?.add(_passwordConfirmationErrorValue);
+    _validateForm();
   }
 
   UIError? _validateField(String field) {
     final formData = {
-      'name': _state.name,
-      'email': _state.email,
-      'password': _state.password,
-      'passwordConfirmation': _state.passwordConfirmation,
+      'name': _name,
+      'email': _email,
+      'password': _password,
+      'passwordConfirmation': _passwordConfirmation,
     };
 
     final error = validation.validate(field: field, input: formData);
@@ -141,6 +130,17 @@ class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
     }
   }
 
+  void _validateForm() {
+    isFormValid = _nameErrorValue == null &&
+        _emailErrorValue == null &&
+        _passwordErrorValue == null &&
+        _passwordConfirmationErrorValue == null &&
+        _name != null &&
+        _email != null &&
+        _password != null &&
+        _passwordConfirmation != null;
+  }
+
   @override
   Future<void> signUp() async {
     try {
@@ -150,10 +150,10 @@ class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
 
       final account = await addAccount.add(
         AddAccountParams(
-          name: _state.name!,
-          email: _state.email!,
-          password: _state.password!,
-          passwordConfirmation: _state.passwordConfirmation!,
+          name: _name!,
+          email: _email!,
+          password: _password!,
+          passwordConfirmation: _passwordConfirmation!,
         ),
       );
       await saveCurrentAccount.save(account);
@@ -173,8 +173,17 @@ class StreamSignUpPresenter with LoadingManager implements SignUpPresenter {
 
   @override
   void dispose() {
-    _controller?.close();
-    _controller = null;
+    _emailError?.close();
+    _emailError = null;
+
+    _nameError?.close();
+    _nameError = null;
+
+    _passwordError?.close();
+    _passwordError = null;
+
+    _passwordConfirmationError?.close();
+    _passwordConfirmationError = null;
 
     _controllerMainError?.close();
     _controllerMainError = null;

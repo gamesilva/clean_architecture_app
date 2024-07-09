@@ -7,27 +7,25 @@ import '../../ui/helpers/errors/ui_error.dart';
 import '../mixins/mixins.dart';
 import '../protocols/protocols.dart';
 
-class LoginState {
-  String? email;
-  UIError? emailError;
-  String? password;
-  UIError? passwordError;
-  String? mainError;
-
-  bool get isFormValid =>
-      emailError == null &&
-      passwordError == null &&
-      email != null &&
-      password != null;
-}
-
-class StreamLoginPresenter with LoadingManager implements LoginPresenter {
+class StreamLoginPresenter
+    with LoadingManager, FormManager
+    implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
   final SaveCurrentAccount saveCurrentAccount;
-  StreamController<LoginState>? _controller =
-      StreamController<LoginState>.broadcast();
-  final _state = LoginState();
+
+  String? _email;
+  String? _password;
+
+  UIError? _emailErrorValue;
+  UIError? _passwordErrorValue;
+
+  String? mainError;
+
+  StreamController<UIError?>? _emailError =
+      StreamController<UIError?>.broadcast();
+  StreamController<UIError?>? _passwordError =
+      StreamController<UIError?>.broadcast();
 
   StreamController<UIError?>? _controllerMainError =
       StreamController<UIError?>.broadcast();
@@ -36,12 +34,10 @@ class StreamLoginPresenter with LoadingManager implements LoginPresenter {
 
   // O distinct garante a emissão de valores diferentes do último
   @override
-  Stream<UIError?> get emailErrorStream =>
-      _controller!.stream.map((state) => state.emailError).distinct();
+  Stream<UIError?> get emailErrorStream => _emailError!.stream.distinct();
 
   @override
-  Stream<UIError?> get passwordErrorStream =>
-      _controller!.stream.map((state) => state.passwordError).distinct();
+  Stream<UIError?> get passwordErrorStream => _passwordError!.stream.distinct();
 
   @override
   Stream<UIError?> get mainErrorStream =>
@@ -51,19 +47,11 @@ class StreamLoginPresenter with LoadingManager implements LoginPresenter {
   Stream<String?> get navigateToStream =>
       _controllerNavigateTo!.stream.distinct();
 
-  @override
-  Stream<bool> get isFormValidStream =>
-      _controller!.stream.map((state) => state.isFormValid).distinct();
-
   StreamLoginPresenter({
     required this.validation,
     required this.authentication,
     required this.saveCurrentAccount,
   });
-
-  void _update() {
-    _controller?.add(_state);
-  }
 
   void _updateError(UIError? error) {
     _controllerMainError?.add(error);
@@ -75,22 +63,24 @@ class StreamLoginPresenter with LoadingManager implements LoginPresenter {
 
   @override
   void validateEmail(String email) {
-    _state.email = email;
-    _state.emailError = _validateField('email');
-    _update();
+    _email = email;
+    _emailErrorValue = _validateField('email');
+    _emailError?.add(_emailErrorValue);
+    _validateForm();
   }
 
   @override
   void validatePassword(String password) {
-    _state.password = password;
-    _state.passwordError = _validateField('password');
-    _update();
+    _password = password;
+    _passwordErrorValue = _validateField('password');
+    _passwordError?.add(_passwordErrorValue);
+    _validateForm();
   }
 
   UIError? _validateField(String field) {
     final formData = {
-      'email': _state.email,
-      'password': _state.password,
+      'email': _email,
+      'password': _password,
     };
 
     final error = validation.validate(field: field, input: formData);
@@ -104,6 +94,13 @@ class StreamLoginPresenter with LoadingManager implements LoginPresenter {
     }
   }
 
+  void _validateForm() {
+    isFormValid = _emailErrorValue == null &&
+        _passwordErrorValue == null &&
+        _email != null &&
+        _password != null;
+  }
+
   @override
   Future<void> auth() async {
     try {
@@ -112,7 +109,7 @@ class StreamLoginPresenter with LoadingManager implements LoginPresenter {
       isLoading = true;
 
       final account = await authentication.auth(
-        AuthenticationParams(email: _state.email!, secret: _state.password!),
+        AuthenticationParams(email: _email!, secret: _password!),
       );
 
       await saveCurrentAccount.save(account);
@@ -132,8 +129,11 @@ class StreamLoginPresenter with LoadingManager implements LoginPresenter {
 
   @override
   void dispose() {
-    _controller?.close();
-    _controller = null;
+    _emailError?.close();
+    _emailError = null;
+
+    _passwordError?.close();
+    _passwordError = null;
 
     _controllerMainError?.close();
     _controllerMainError = null;
