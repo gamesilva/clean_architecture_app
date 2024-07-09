@@ -11,30 +11,20 @@ import '../../ui/pages/pages.dart';
 import '../mixins/mixins.dart';
 
 class StreamSurveysPresenter
-    with SessionManager, LoadingManager
+    with SessionManager, LoadingManager, NavigationManager
     implements SurveysPresenter {
   final LoadSurveys loadSurveys;
 
   StreamController<List<SurveyViewModel>?>? _surveys =
       StreamController<List<SurveyViewModel>>();
 
-  StreamController<String>? _controllerNavigateTo =
-      StreamController<String>.broadcast();
-
   @override
   Stream<List<SurveyViewModel>?> get surveysStream => _surveys!.stream;
-
-  Stream<String?> get navigateToStream =>
-      _controllerNavigateTo!.stream.distinct();
 
   StreamSurveysPresenter({required this.loadSurveys});
 
   void _updateSurveys(List<SurveyViewModel> surveys) {
     _surveys?.add(surveys);
-  }
-
-  void _updateNavigateTo(String route) {
-    _controllerNavigateTo?.add(route);
   }
 
   @override
@@ -67,13 +57,10 @@ class StreamSurveysPresenter
   void dispose() {
     _surveys?.close();
     _surveys = null;
-
-    _controllerNavigateTo?.close();
-    _controllerNavigateTo = null;
   }
 
   @override
   void goToSurveyResult(String surveyId) {
-    _updateNavigateTo('/survey_result/$surveyId');
+    navigateTo = '/survey_result/$surveyId';
   }
 }

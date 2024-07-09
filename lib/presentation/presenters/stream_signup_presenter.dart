@@ -9,7 +9,7 @@ import '../protocols/protocols.dart';
 import '../mixins/mixins.dart';
 
 class StreamSignUpPresenter
-    with LoadingManager, FormManager
+    with LoadingManager, FormManager, NavigationManager
     implements SignUpPresenter {
   final Validation validation;
   final AddAccount addAccount;
@@ -40,8 +40,8 @@ class StreamSignUpPresenter
   StreamController<UIError?>? _controllerMainError =
       StreamController<UIError?>.broadcast();
 
-  StreamController<String>? _controllerNavigateTo =
-      StreamController<String>.broadcast();
+  // StreamController<String>? _controllerNavigateTo =
+  //     StreamController<String>.broadcast();
 
   // O distinct garante a emissão de valores diferentes do último
   @override
@@ -61,9 +61,9 @@ class StreamSignUpPresenter
   Stream<UIError?> get mainErrorStream =>
       _controllerMainError!.stream.distinct();
 
-  @override
-  Stream<String?> get navigateToStream =>
-      _controllerNavigateTo!.stream.distinct();
+  // @override
+  // Stream<String?> get navigateToStream =>
+  //     _controllerNavigateTo!.stream.distinct();
 
   StreamSignUpPresenter({
     required this.validation,
@@ -75,9 +75,9 @@ class StreamSignUpPresenter
     _controllerMainError?.add(error);
   }
 
-  void _updateNavigateTo(String route) {
-    _controllerNavigateTo?.add(route);
-  }
+  // void _updateNavigateTo(String route) {
+  //   _controllerNavigateTo?.add(route);
+  // }
 
   @override
   void validateName(String name) {
@@ -157,7 +157,7 @@ class StreamSignUpPresenter
         ),
       );
       await saveCurrentAccount.save(account);
-      _updateNavigateTo('/surveys');
+      navigateTo = '/surveys';
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.emailInUse:
@@ -191,6 +191,6 @@ class StreamSignUpPresenter
 
   @override
   void goToLogin() {
-    _updateNavigateTo('/login');
+    navigateTo = '/login';
   }
 }

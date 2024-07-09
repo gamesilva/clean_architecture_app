@@ -2,13 +2,14 @@ import 'dart:async';
 
 import '../../domain/usecases/usecases.dart';
 import '../../ui/pages/pages.dart';
+import '../mixins/mixins.dart';
 
-class StreamSplashPresenter implements SplashPresenter {
+class StreamSplashPresenter with NavigationManager implements SplashPresenter {
   final LoadCurrentAccount loadCurrentAccount;
-  final _navigateTo = StreamController<String?>();
+  // final _navigateTo = StreamController<String?>();
 
-  @override
-  Stream<String?> get navigateToStream => _navigateTo.stream;
+  // @override
+  // Stream<String?> get navigateToStream => _navigateTo.stream;
 
   StreamSplashPresenter({required this.loadCurrentAccount});
 
@@ -17,9 +18,9 @@ class StreamSplashPresenter implements SplashPresenter {
     await Future.delayed(Duration(seconds: durationInSeconds));
     try {
       final account = await loadCurrentAccount.load();
-      _navigateTo.add(account?.token == null ? '/login' : '/surveys');
+      navigateTo = account?.token == null ? '/login' : '/surveys';
     } catch (e) {
-      _navigateTo.add('/login');
+      navigateTo = '/login';
     }
   }
 }

@@ -8,7 +8,7 @@ import '../mixins/mixins.dart';
 import '../protocols/protocols.dart';
 
 class StreamLoginPresenter
-    with LoadingManager, FormManager
+    with LoadingManager, FormManager, NavigationManager
     implements LoginPresenter {
   final Validation validation;
   final Authentication authentication;
@@ -29,8 +29,6 @@ class StreamLoginPresenter
 
   StreamController<UIError?>? _controllerMainError =
       StreamController<UIError?>.broadcast();
-  StreamController<String>? _controllerNavigateTo =
-      StreamController<String>.broadcast();
 
   // O distinct garante a emissão de valores diferentes do último
   @override
@@ -43,10 +41,6 @@ class StreamLoginPresenter
   Stream<UIError?> get mainErrorStream =>
       _controllerMainError!.stream.distinct();
 
-  @override
-  Stream<String?> get navigateToStream =>
-      _controllerNavigateTo!.stream.distinct();
-
   StreamLoginPresenter({
     required this.validation,
     required this.authentication,
@@ -55,10 +49,6 @@ class StreamLoginPresenter
 
   void _updateError(UIError? error) {
     _controllerMainError?.add(error);
-  }
-
-  void _updateNavigateTo(String route) {
-    _controllerNavigateTo?.add(route);
   }
 
   @override
@@ -113,7 +103,7 @@ class StreamLoginPresenter
       );
 
       await saveCurrentAccount.save(account);
-      _updateNavigateTo('/surveys');
+      navigateTo = '/surveys';
     } on DomainError catch (error) {
       switch (error) {
         case DomainError.invalidCredentials:
@@ -137,13 +127,10 @@ class StreamLoginPresenter
 
     _controllerMainError?.close();
     _controllerMainError = null;
-
-    _controllerNavigateTo?.close();
-    _controllerNavigateTo = null;
   }
 
   @override
   void goToSignUp() {
-    _updateNavigateTo('/signup');
+    navigateTo = '/signup';
   }
 }
