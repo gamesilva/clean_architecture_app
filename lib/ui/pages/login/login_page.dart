@@ -1,11 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
 import '../../helpers/helpers.dart';
+import '../../mixins/mixins.dart';
 
 import 'components/components.dart';
 import 'login_presenter.dart';
@@ -18,14 +18,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  void _hideKeyboard() {
-    final currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
-  }
-
+class _LoginPageState extends State<LoginPage>
+    with KeyboardManager, LoadingManager, UIErrorManager, NavigationManager {
   @override
   void dispose() {
     super.dispose();
@@ -37,28 +31,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Builder(
         builder: ((context) {
-          widget.presenter?.isLoadingStream.listen((isLoading) {
-            if (isLoading == true) {
-              showLoading(context);
-            } else {
-              hideLoading(context);
-            }
-          });
-
-          widget.presenter?.mainErrorStream.listen((UIError? error) {
-            if (error != null) {
-              showErrorMessage(context, error.description);
-            }
-          });
-
-          widget.presenter?.navigateToStream.listen((page) {
-            if (page?.isNotEmpty == true) {
-              Get.offAllNamed(page!);
-            }
-          });
+          handleLoading(context, widget.presenter?.isLoadingStream);
+          handleMainError(context, widget.presenter?.mainErrorStream);
+          handleNavigation(widget.presenter?.navigateToStream, clear: true);
 
           return GestureDetector(
-            onTap: _hideKeyboard,
+            onTap: () => hideKeyboard(context),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
