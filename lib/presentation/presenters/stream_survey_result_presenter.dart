@@ -66,5 +66,8 @@ class StreamSurveyResultPresenter
   void dispose() {
     _surveyResult?.close();
     _surveyResult = null;
+
+    closeLoadingManagerStream();
+    closeSessionManagerStream();
   }
 }

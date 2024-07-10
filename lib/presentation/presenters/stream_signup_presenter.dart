@@ -162,6 +162,11 @@ class StreamSignUpPresenter
 
     _passwordConfirmationError?.close();
     _passwordConfirmationError = null;
+
+    closeFormManagerStream();
+    closeLoadingManagerStream();
+    closeNavigationManagerStream();
+    closeUIErrorManagerStream();
   }
 
   @override

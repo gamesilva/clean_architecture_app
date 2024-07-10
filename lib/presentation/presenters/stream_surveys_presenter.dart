@@ -57,6 +57,10 @@ class StreamSurveysPresenter
   void dispose() {
     _surveys?.close();
     _surveys = null;
+
+    closeLoadingManagerStream();
+    closeNavigationManagerStream();
+    closeSessionManagerStream();
   }
 
   @override

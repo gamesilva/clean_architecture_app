@@ -110,6 +110,11 @@ class StreamLoginPresenter
 
     _passwordError?.close();
     _passwordError = null;
+
+    closeFormManagerStream();
+    closeLoadingManagerStream();
+    closeNavigationManagerStream();
+    closeUIErrorManagerStream();
   }
 
   @override
