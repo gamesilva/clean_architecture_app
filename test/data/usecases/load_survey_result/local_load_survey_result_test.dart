@@ -5,8 +5,6 @@ import 'package:test/test.dart';
 
 import 'package:clean_architecture_app/data/cache/cache.dart';
 import 'package:clean_architecture_app/data/usecases/usecases.dart';
-
-import 'package:clean_architecture_app/domain/entities/survey_entity.dart';
 import 'package:clean_architecture_app/domain/helpers/helpers.dart';
 
 class CacheStorageSpy extends Mock implements CacheStorage {}
@@ -131,6 +129,89 @@ void main() {
       final future = sut.loadBySurvey(surveyId: surveyId);
 
       expect(future, throwsA(DomainError.unexpected));
+    });
+  });
+
+  group('validate', () {
+    late CacheStorage cacheStorage;
+    late LocalLoadSurveyResult sut;
+    late Map? data;
+    late String surveyId;
+
+    Map mockValidData() => {
+          'surveyId': faker.guid.guid(),
+          'question': faker.lorem.sentence(),
+          'answers': [
+            {
+              'image': faker.internet.httpUrl(),
+              'answer': faker.lorem.sentence(),
+              'isCurrentAnswer': 'true',
+              'percent': '40',
+            },
+            {
+              'answer': faker.lorem.sentence(),
+              'isCurrentAnswer': 'false',
+              'percent': '60',
+            },
+          ]
+        };
+
+    When mockFetchCall() =>
+        when(() => cacheStorage.fetch('survey_result/$surveyId'));
+
+    void mockFetch(Map? json) {
+      data = json;
+      mockFetchCall().thenAnswer((_) async => data);
+    }
+
+    void mockFetchError() => mockFetchCall().thenThrow(Exception());
+
+    setUp(() {
+      surveyId = faker.guid.guid();
+      cacheStorage = CacheStorageSpy();
+      sut = LocalLoadSurveyResult(
+        cacheStorage: cacheStorage,
+      );
+
+      mockFetch(mockValidData());
+    });
+
+    test('Should call CacheStorage with correct key', () async {
+      await sut.validate(surveyId);
+
+      verify(() => cacheStorage.fetch('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if it is invalid', () async {
+      mockFetch({
+        'surveyId': faker.guid.guid(),
+        'question': faker.lorem.sentence(),
+        'answers': [
+          {
+            'image': faker.internet.httpUrl(),
+            'answer': faker.lorem.sentence(),
+            'isCurrentAnswer': 'invalid bool',
+            'percent': 'invalid int',
+          }
+        ]
+      });
+      await sut.validate(surveyId);
+
+      verify(() => cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if it is incomplete', () async {
+      mockFetch({'surveyId': faker.guid.guid()});
+      await sut.validate(surveyId);
+
+      verify(() => cacheStorage.delete('survey_result/$surveyId')).called(1);
+    });
+
+    test('Should delete cache if it throws', () async {
+      mockFetchError();
+      await sut.validate(surveyId);
+
+      verify(() => cacheStorage.delete('survey_result/$surveyId')).called(1);
     });
   });
 }
