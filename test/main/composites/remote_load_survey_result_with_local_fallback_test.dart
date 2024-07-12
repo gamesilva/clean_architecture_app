@@ -3,35 +3,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_architecture_app/data/usecases/usecases.dart';
-
 import 'package:clean_architecture_app/domain/entities/entities.dart';
 import 'package:clean_architecture_app/domain/helpers/helpers.dart';
-import 'package:clean_architecture_app/domain/usecases/usecases.dart';
-
-class RemoteLoadSurveyResultWithLocalFallback implements LoadSurveyResult {
-  final RemoteLoadSurveyResult remote;
-  final LocalLoadSurveyResult local;
-
-  RemoteLoadSurveyResultWithLocalFallback({
-    required this.remote,
-    required this.local,
-  });
-
-  @override
-  Future<SurveyResultEntity>? loadBySurvey({String? surveyId}) async {
-    try {
-      final surveyResult = await remote.loadBySurvey(surveyId: surveyId);
-      await local.save(surveyId: surveyId!, surveyResult: surveyResult);
-      return surveyResult!;
-    } catch (error) {
-      if (error == DomainError.accessDenied) {
-        rethrow;
-      }
-      await local.validate(surveyId!);
-      return await local.loadBySurvey(surveyId: surveyId)!;
-    }
-  }
-}
+import 'package:clean_architecture_app/main/composites/composites.dart';
 
 class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 }
