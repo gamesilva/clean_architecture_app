@@ -4,7 +4,7 @@ import '../../usecases/usecases.dart';
 
 SurveyResultPresenter makeStreamSurveyResultPresenter(String surveyId) {
   return StreamSurveyResultPresenter(
-    loadSurveyResult: makeRemoteLoadSurveyResult(surveyId),
+    loadSurveyResult: makeRemoteLoadSurveyResultWithLocalFallback(surveyId),
     surveyId: surveyId,
   );
 }
