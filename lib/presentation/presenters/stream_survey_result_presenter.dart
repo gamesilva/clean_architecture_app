@@ -70,4 +70,7 @@ class StreamSurveyResultPresenter
     closeLoadingManagerStream();
     closeSessionManagerStream();
   }
+
+  @override
+  Future<void>? save({required String answer}) {}
 }
