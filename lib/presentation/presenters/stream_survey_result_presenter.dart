@@ -75,25 +75,34 @@ class StreamSurveyResultPresenter
 
   @override
   Future<void>? save({required String answer}) async {
-    isLoading = true;
+    try {
+      isLoading = true;
 
-    final surveyResult = await saveSurveyResult.save(answer: answer);
+      final surveyResult = await saveSurveyResult.save(answer: answer);
 
-    final surveyResultViewModel = SurveyResultViewModel(
-      surveyId: surveyResult?.surveyId,
-      question: surveyResult?.question,
-      answers: surveyResult?.answers
-          ?.map(
-            (answer) => SurveyAnswerViewModel(
-              image: answer.image,
-              answer: answer.answer,
-              isCurrentAnswer: answer.isCurrentAnswer,
-              percent: '${answer.percent}%',
-            ),
-          )
-          .toList(),
-    );
-    _updateSurveyResult(surveyResultViewModel);
-    isLoading = false;
+      final surveyResultViewModel = SurveyResultViewModel(
+        surveyId: surveyResult?.surveyId,
+        question: surveyResult?.question,
+        answers: surveyResult?.answers
+            ?.map(
+              (answer) => SurveyAnswerViewModel(
+                image: answer.image,
+                answer: answer.answer,
+                isCurrentAnswer: answer.isCurrentAnswer,
+                percent: '${answer.percent}%',
+              ),
+            )
+            .toList(),
+      );
+      _updateSurveyResult(surveyResultViewModel);
+    } on DomainError catch (error) {
+      if (error == DomainError.accessDenied) {
+        isSessionExpired = true;
+      } else {
+        _surveyResult?.addError(UIError.unexpected.description);
+      }
+    } finally {
+      isLoading = false;
+    }
   }
 }
