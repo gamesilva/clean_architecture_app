@@ -75,6 +75,25 @@ class StreamSurveyResultPresenter
 
   @override
   Future<void>? save({required String answer}) async {
-    await saveSurveyResult.save(answer: answer);
+    isLoading = true;
+
+    final surveyResult = await saveSurveyResult.save(answer: answer);
+
+    final surveyResultViewModel = SurveyResultViewModel(
+      surveyId: surveyResult?.surveyId,
+      question: surveyResult?.question,
+      answers: surveyResult?.answers
+          ?.map(
+            (answer) => SurveyAnswerViewModel(
+              image: answer.image,
+              answer: answer.answer,
+              isCurrentAnswer: answer.isCurrentAnswer,
+              percent: '${answer.percent}%',
+            ),
+          )
+          .toList(),
+    );
+    _updateSurveyResult(surveyResultViewModel);
+    isLoading = false;
   }
 }
