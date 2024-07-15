@@ -10,6 +10,7 @@ class StreamSurveyResultPresenter
     with LoadingManager, SessionManager
     implements SurveyResultPresenter {
   final LoadSurveyResult loadSurveyResult;
+  final SaveSurveyResult saveSurveyResult;
   final String surveyId;
 
   StreamController<SurveyResultViewModel>? _surveyResult =
@@ -20,6 +21,7 @@ class StreamSurveyResultPresenter
 
   StreamSurveyResultPresenter({
     required this.loadSurveyResult,
+    required this.saveSurveyResult,
     required this.surveyId,
   });
 
@@ -72,5 +74,7 @@ class StreamSurveyResultPresenter
   }
 
   @override
-  Future<void>? save({required String answer}) {}
+  Future<void>? save({required String answer}) async {
+    await saveSurveyResult.save(answer: answer);
+  }
 }
