@@ -7,6 +7,7 @@ import 'package:clean_architecture_app/ui/helpers/helpers.dart';
 import 'package:clean_architecture_app/ui/pages/pages.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../mocks/mocks.dart';
 import '../helpers/helpers.dart';
 
 class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
@@ -56,21 +57,6 @@ void main() {
       makePage(path: '/surveys', page: () => SurveysPage(presenter: presenter)),
     );
   }
-
-  List<SurveyViewModel> makeSurveys() => [
-        SurveyViewModel(
-          id: '1',
-          question: 'Question 1',
-          date: 'Date 1',
-          didAnswer: true,
-        ),
-        SurveyViewModel(
-          id: '2',
-          question: 'Question 2',
-          date: 'Date 2',
-          didAnswer: false,
-        ),
-      ];
 
   tearDown((() => closeStreams()));
 
@@ -126,7 +112,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    loadSurveysController.add(makeSurveys());
+    loadSurveysController.add(FakeSurveysFactory.makeViewModel());
     await tester.pump();
 
     expect(find.text('Algo errado aconteceu. Tente novamente'), findsNothing);
@@ -155,7 +141,7 @@ void main() {
   testWidgets('Should call goToSurveyResult on survey click',
       (WidgetTester tester) async {
     await loadPage(tester);
-    loadSurveysController.add(makeSurveys());
+    loadSurveysController.add(FakeSurveysFactory.makeViewModel());
     await tester.pump();
 
     await tester.tap(find.text('Question 1'));

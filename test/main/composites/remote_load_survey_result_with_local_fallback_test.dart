@@ -7,6 +7,8 @@ import 'package:clean_architecture_app/domain/entities/entities.dart';
 import 'package:clean_architecture_app/domain/helpers/helpers.dart';
 import 'package:clean_architecture_app/main/composites/composites.dart';
 
+import '../../mocks/mocks.dart';
+
 class RemoteLoadSurveyResultSpy extends Mock implements RemoteLoadSurveyResult {
 }
 
@@ -23,20 +25,8 @@ void main() {
   When mockRemoteLoadCall() =>
       when(() => remote.loadBySurvey(surveyId: any(named: 'surveyId')));
 
-  SurveyResultEntity mockSurveyResult() => SurveyResultEntity(
-        surveyId: surveyId,
-        question: faker.lorem.sentence(),
-        answers: [
-          SurveyAnswerEntity(
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: faker.randomGenerator.boolean(),
-            percent: faker.randomGenerator.integer(100),
-          ),
-        ],
-      );
-
   void mockRemoteLoad() {
-    remoteResult = mockSurveyResult();
+    remoteResult = FakeSurveyResultFactory.makeEntity();
     mockRemoteLoadCall().thenAnswer((_) async => remoteResult);
   }
 
@@ -47,7 +37,7 @@ void main() {
       when(() => local.loadBySurvey(surveyId: any(named: 'surveyId')));
 
   void mockLocalLoad() {
-    localResult = mockSurveyResult();
+    localResult = FakeSurveyResultFactory.makeEntity();
     mockLocalLoadCall().thenAnswer((_) async => localResult);
   }
 

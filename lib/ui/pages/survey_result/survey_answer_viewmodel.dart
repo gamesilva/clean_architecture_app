@@ -14,5 +14,5 @@ class SurveyAnswerViewModel extends Equatable {
   });
 
   @override
-  List get props => ['image', 'answer', 'isCurrentAnswer', 'percent'];
+  List get props => [image, answer, isCurrentAnswer, percent];
 }

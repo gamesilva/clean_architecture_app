@@ -1,10 +1,11 @@
-import 'package:faker/faker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 import 'package:clean_architecture_app/domain/entities/entities.dart';
 import 'package:clean_architecture_app/domain/usecases/usecases.dart';
 import 'package:clean_architecture_app/presentation/presenters/presenters.dart';
+
+import '../../mocks/mocks.dart';
 
 class LoadCurrentAccountSpy extends Mock implements LoadCurrentAccount {}
 
@@ -25,14 +26,14 @@ void main() {
   });
 
   test('Should call LoadCurrentAccount', () async {
-    mockLoadCurrentAccount(account: AccountEntity(faker.guid.guid()));
+    mockLoadCurrentAccount(account: FakeAccountFactory.makeEntity());
     await sut.checkAccount(durationInSeconds: 0);
 
     verify(() => loadCurrentAccount.load()).called(1);
   });
 
   test('Should go to surveys page on success', () async {
-    mockLoadCurrentAccount(account: AccountEntity(faker.guid.guid()));
+    mockLoadCurrentAccount(account: FakeAccountFactory.makeEntity());
     sut.navigateToStream
         .listen(expectAsync1((page) => expect(page, '/surveys')));
 

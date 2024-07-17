@@ -8,6 +8,8 @@ import 'package:clean_architecture_app/domain/usecases/usecases.dart';
 import 'package:clean_architecture_app/data/usecases/usecases.dart';
 import 'package:clean_architecture_app/data/http/http.dart';
 
+import '../../../mocks/mocks.dart';
+
 class HttpClientSpy extends Mock implements HttpClient {}
 
 // The structure of the test is Triple A (Arrange, Act, Assert);
@@ -16,6 +18,8 @@ void main() {
   late HttpClientSpy httpClient;
   late String url;
   late AuthenticationParams params;
+  late Map apiResult;
+
   When mockRequest() => when(
         () => httpClient.request(
           url: any(named: 'url'),
@@ -25,6 +29,7 @@ void main() {
       );
 
   void mockHttpData(Map data) {
+    apiResult = data;
     mockRequest().thenAnswer((_) async => data);
   }
 
@@ -36,15 +41,11 @@ void main() {
     httpClient = HttpClientSpy();
     url = faker.internet.httpUrl();
     sut = RemoteAuthentication(httpClient: httpClient, url: url);
-    params = AuthenticationParams(
-      email: faker.internet.email(),
-      secret: faker.internet.password(),
-    );
+    params = FakeParamsFactory.makeAuthentication();
+    mockHttpData(FakeAccountFactory.makeApiJson());
   });
 
   test('Should call HttpClient with correct values', () async {
-    mockHttpData(
-        {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
     await sut.auth(params);
     verify(() => httpClient.request(
           url: url,
@@ -83,11 +84,8 @@ void main() {
   });
 
   test('Should return an Account if HttpClient return 200', () async {
-    final accessToken = faker.guid.guid();
-    mockHttpData({'accessToken': accessToken, 'name': faker.person.name()});
-
     final account = await sut.auth(params);
-    expect(account.token, accessToken);
+    expect(account.token, apiResult['accessToken']);
   });
 
   test(

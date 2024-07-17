@@ -8,6 +8,7 @@ import 'package:clean_architecture_app/ui/pages/pages.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 
+import '../../mocks/mocks.dart';
 import '../helpers/helpers.dart';
 
 class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
@@ -55,24 +56,6 @@ void main() {
       );
     }));
   }
-
-  SurveyResultViewModel makeSurveyResult() => SurveyResultViewModel(
-        surveyId: 'Any Id',
-        question: 'Question',
-        answers: [
-          SurveyAnswerViewModel(
-            image: 'Image 0',
-            answer: 'Answer 0',
-            isCurrentAnswer: true,
-            percent: '60%',
-          ),
-          SurveyAnswerViewModel(
-            answer: 'Answer 1',
-            isCurrentAnswer: false,
-            percent: '40%',
-          ),
-        ],
-      );
 
   tearDown((() => closeStreams()));
 
@@ -131,7 +114,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(makeSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.makeViewModel());
     await mockNetworkImagesFor((() async {
       await tester.pump();
     }));
@@ -178,7 +161,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(makeSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.makeViewModel());
     await mockNetworkImagesFor((() async {
       await tester.pump();
     }));
@@ -192,7 +175,7 @@ void main() {
       (WidgetTester tester) async {
     await loadPage(tester);
 
-    surveyResultController.add(makeSurveyResult());
+    surveyResultController.add(FakeSurveyResultFactory.makeViewModel());
     await mockNetworkImagesFor((() async {
       await tester.pump();
     }));

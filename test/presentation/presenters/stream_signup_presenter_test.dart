@@ -11,6 +11,8 @@ import 'package:clean_architecture_app/ui/helpers/errors/errors.dart';
 import 'package:clean_architecture_app/presentation/presenters/presenters.dart';
 import 'package:clean_architecture_app/presentation/protocols/protocols.dart';
 
+import '../../mocks/mocks.dart';
+
 class ValidationSpy extends Mock implements Validation {}
 
 class AddAccountSpy extends Mock implements AddAccount {}
@@ -27,7 +29,7 @@ void main() {
   late String email;
   late String password;
   late String passwordConfirmation;
-  late String token;
+  late AccountEntity account;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
       field: field ?? any(named: 'field'), input: any(named: 'input')));
@@ -38,8 +40,10 @@ void main() {
   When mockAddAccountCall() =>
       when(() => addAccount.add(any<AddAccountParams>()));
 
-  void mockAddAccount() =>
-      mockAddAccountCall().thenAnswer((_) async => AccountEntity(token));
+  void mockAddAccount(AccountEntity data) {
+    account = data;
+    mockAddAccountCall().thenAnswer((_) async => data);
+  }
 
   void mockAddAccountError(DomainError error) =>
       mockAddAccountCall().thenThrow(error);
@@ -54,7 +58,6 @@ void main() {
     email = faker.internet.email();
     password = faker.internet.password();
     passwordConfirmation = faker.internet.password();
-    token = faker.guid.guid();
 
     registerFallbackValue(AddAccountParams(
       name: name,
@@ -62,7 +65,7 @@ void main() {
       password: password,
       passwordConfirmation: passwordConfirmation,
     ));
-    registerFallbackValue(AccountEntity(token));
+    registerFallbackValue(FakeAccountFactory.makeEntity());
   });
 
   setUp(() {
@@ -77,7 +80,7 @@ void main() {
     );
 
     mockValidation();
-    mockAddAccount();
+    mockAddAccount(FakeAccountFactory.makeEntity());
   });
   test('Should call Validation with correct email', () {
     final formData = {
@@ -344,7 +347,7 @@ void main() {
 
     await sut.signUp();
 
-    verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+    verify(() => saveCurrentAccount.save(account)).called(1);
   });
 
   test('Should emit UnexpectedError if SaveCurrentAccount fails', () async {

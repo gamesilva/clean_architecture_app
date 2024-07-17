@@ -11,6 +11,8 @@ import 'package:clean_architecture_app/presentation/presenters/presenters.dart';
 
 import 'package:clean_architecture_app/ui/pages/pages.dart';
 
+import '../../mocks/mocks.dart';
+
 class LoadSurveyResultSpy extends Mock implements LoadSurveyResult {}
 
 class SaveSurveyResultSpy extends Mock implements SaveSurveyResult {}
@@ -23,24 +25,6 @@ void main() {
   late SurveyResultEntity saveResult;
   late String surveyId;
   late String answer;
-
-  SurveyResultEntity mockValidData() => SurveyResultEntity(
-        surveyId: faker.guid.guid(),
-        question: faker.lorem.sentence(),
-        answers: [
-          SurveyAnswerEntity(
-            image: faker.internet.httpUrl(),
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: faker.randomGenerator.boolean(),
-            percent: faker.randomGenerator.integer(100),
-          ),
-          SurveyAnswerEntity(
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: faker.randomGenerator.boolean(),
-            percent: faker.randomGenerator.integer(100),
-          ),
-        ],
-      );
 
   When mockLoadSurveyResultCall() => when(() => loadSurveyResult.loadBySurvey(
         surveyId: any(named: 'surveyId'),
@@ -95,8 +79,8 @@ void main() {
       surveyId: surveyId,
     );
 
-    mockLoadSurveyResult(mockValidData());
-    mockSaveSurveyResult(mockValidData());
+    mockLoadSurveyResult(FakeSurveyResultFactory.makeEntity());
+    mockSaveSurveyResult(FakeSurveyResultFactory.makeEntity());
   });
 
   group('loadData', () {
