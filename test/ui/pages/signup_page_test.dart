@@ -1,4 +1,3 @@
-// ignore_for_file: deprecated_member_use
 import 'dart:async';
 
 import 'package:faker/faker.dart';
@@ -22,7 +21,7 @@ void main() {
   late StreamController<UIError?> mainErrorController;
   late StreamController<String?> navigateToController;
   late StreamController<bool> isFormValidController;
-  late StreamController<bool?> isLoadingController;
+  late StreamController<bool> isLoadingController;
 
   void initStreams() {
     nameErrorController = StreamController<UIError?>();
@@ -32,7 +31,7 @@ void main() {
     mainErrorController = StreamController<UIError?>();
     navigateToController = StreamController<String?>();
     isFormValidController = StreamController<bool>();
-    isLoadingController = StreamController<bool?>();
+    isLoadingController = StreamController<bool>();
   }
 
   void mockStreams() {
@@ -132,7 +131,7 @@ void main() {
           'When a TextFormField has only text child, means it has no errors, since one of the childs is always the label text',
     );
 
-    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(
       button.onPressed,
       null,
@@ -259,7 +258,7 @@ void main() {
     isFormValidController.add(true);
     await tester.pump(); // Atualizando a tela para receber novos valores.
 
-    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, isNotNull);
   });
 
@@ -270,7 +269,7 @@ void main() {
     isFormValidController.add(false);
     await tester.pump(); // Atualizando a tela para receber novos valores.
 
-    final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(button.onPressed, null);
   });
 
@@ -280,7 +279,7 @@ void main() {
     isFormValidController.add(true);
     await tester.pump();
 
-    final button = find.byType(RaisedButton);
+    final button = find.byType(ElevatedButton);
 
     await tester.ensureVisible(button);
     await tester.tap(button);
@@ -303,10 +302,6 @@ void main() {
     isLoadingController.add(true);
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(null);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should presents error message if signUp fails',

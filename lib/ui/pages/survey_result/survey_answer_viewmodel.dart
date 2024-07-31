@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 
 class SurveyAnswerViewModel extends Equatable {
   final String? image;
-  final String? answer;
-  final bool? isCurrentAnswer;
-  final String? percent;
+  final String answer;
+  final bool isCurrentAnswer;
+  final String percent;
 
   SurveyAnswerViewModel({
     this.image,

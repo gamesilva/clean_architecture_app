@@ -19,8 +19,8 @@ void main() {
   When mockFetchSecureCall() =>
       when(() => fetchSecureCacheStorage.fetch(any()));
 
-  void mockFetchSecure() =>
-      mockFetchSecureCall().thenAnswer((_) async => token);
+  void mockFetchSecure(String? data) =>
+      mockFetchSecureCall().thenAnswer((_) async => data);
 
   void mockFetchSecureError() => mockFetchSecureCall().thenThrow(Exception());
 
@@ -31,7 +31,7 @@ void main() {
     );
 
     token = faker.guid.guid();
-    mockFetchSecure();
+    mockFetchSecure(token);
   });
 
   // O método fetch vai retornar null por causa da lib Mock
@@ -50,6 +50,14 @@ void main() {
   test('Should throw UnexpectError if FetchSecureCacheStorage throws',
       () async {
     mockFetchSecureError();
+    final future = sut.load();
+
+    expect(future, throwsA(DomainError.unexpected));
+  });
+
+  test('Should throw UnexpectError if FetchSecureCacheStorage returns null',
+      () async {
+    mockFetchSecure(null);
     final future = sut.load();
 
     expect(future, throwsA(DomainError.unexpected));

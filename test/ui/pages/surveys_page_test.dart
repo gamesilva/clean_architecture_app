@@ -14,14 +14,14 @@ class SurveysPresenterSpy extends Mock implements SurveysPresenter {}
 
 void main() {
   late SurveysPresenter presenter;
-  late StreamController<bool?> isLoadingController;
-  late StreamController<bool?> isSessionExpiredController;
+  late StreamController<bool> isLoadingController;
+  late StreamController<bool> isSessionExpiredController;
   late StreamController<List<SurveyViewModel>> loadSurveysController;
   late StreamController<String?> navigateToController;
 
   void initStreams() {
-    isLoadingController = StreamController<bool?>();
-    isSessionExpiredController = StreamController<bool?>();
+    isLoadingController = StreamController<bool>();
+    isSessionExpiredController = StreamController<bool>();
     loadSurveysController = StreamController<List<SurveyViewModel>>();
     navigateToController = StreamController<String?>();
   }
@@ -54,7 +54,7 @@ void main() {
     mockStreams();
 
     await tester.pumpWidget(
-      makePage(path: '/surveys', page: () => SurveysPage(presenter: presenter)),
+      makePage(path: '/surveys', page: () => SurveysPage(presenter)),
     );
   }
 
@@ -90,10 +90,6 @@ void main() {
     isLoadingController.add(true);
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(null);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should present error if loadSurveysStream fails',
@@ -186,10 +182,6 @@ void main() {
     await loadPage(tester);
 
     isSessionExpiredController.add(false);
-    await tester.pumpAndSettle();
-    expect(currentRoute, '/surveys');
-
-    isSessionExpiredController.add(null);
     await tester.pumpAndSettle();
     expect(currentRoute, '/surveys');
   });

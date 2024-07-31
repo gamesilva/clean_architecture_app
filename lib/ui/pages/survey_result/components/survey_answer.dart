@@ -14,20 +14,20 @@ class SurveyAnswer extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Text(
-              viewModel.answer!,
+              viewModel.answer,
               style: TextStyle(fontSize: 16),
             ),
           ),
         ),
         Text(
-          viewModel.percent!,
+          viewModel.percent,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Theme.of(context).primaryColorDark,
           ),
         ),
-        viewModel.isCurrentAnswer! ? ActiveIcon() : DisableIcon()
+        viewModel.isCurrentAnswer ? ActiveIcon() : DisableIcon()
       ];
 
       if (viewModel.image != null) {

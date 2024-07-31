@@ -4,5 +4,5 @@ import '../../../../ui/pages/pages.dart';
 import '../../factories.dart';
 
 Widget makeSurveysPage() {
-  return SurveysPage(presenter: makeStreamSurveysPresenter());
+  return SurveysPage(makeStreamSurveysPresenter());
 }

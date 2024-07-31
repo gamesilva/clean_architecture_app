@@ -15,13 +15,13 @@ class SurveyResultPresenterSpy extends Mock implements SurveyResultPresenter {}
 
 void main() {
   late SurveyResultPresenter presenter;
-  late StreamController<bool?> isLoadingController;
-  late StreamController<bool?> isSessionExpiredController;
+  late StreamController<bool> isLoadingController;
+  late StreamController<bool> isSessionExpiredController;
   late StreamController<SurveyResultViewModel> surveyResultController;
 
   void initStreams() {
-    isLoadingController = StreamController<bool?>();
-    isSessionExpiredController = StreamController<bool?>();
+    isLoadingController = StreamController<bool>();
+    isSessionExpiredController = StreamController<bool>();
     surveyResultController = StreamController<SurveyResultViewModel>();
   }
 
@@ -79,10 +79,6 @@ void main() {
     isLoadingController.add(true);
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    isLoadingController.add(null);
-    await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('Should present error if surveyResultStream fails',
@@ -149,10 +145,6 @@ void main() {
     await loadPage(tester);
 
     isSessionExpiredController.add(false);
-    await tester.pumpAndSettle();
-    expect(currentRoute, '/survey_result/any_survey_id');
-
-    isSessionExpiredController.add(null);
     await tester.pumpAndSettle();
     expect(currentRoute, '/survey_result/any_survey_id');
   });

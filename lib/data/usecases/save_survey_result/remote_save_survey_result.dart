@@ -5,8 +5,8 @@ import '../../http/http.dart';
 import '../../models/models.dart';
 
 class RemoteSaveSurveyResult implements SaveSurveyResult {
-  final String? url;
-  final HttpClient? httpClient;
+  final String url;
+  final HttpClient httpClient;
 
   RemoteSaveSurveyResult({
     required this.url,
@@ -16,7 +16,7 @@ class RemoteSaveSurveyResult implements SaveSurveyResult {
   @override
   Future<SurveyResultEntity>? save({required String answer}) async {
     try {
-      final json = await httpClient?.request(
+      final json = await httpClient.request(
         url: url,
         method: 'put',
         body: {'answer': answer},

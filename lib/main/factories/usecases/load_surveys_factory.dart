@@ -4,14 +4,14 @@ import '../../../domain/usecases/usecases.dart';
 import '../../composites/composites.dart';
 import '../factories.dart';
 
-LoadSurveys makeRemoteLoadSurveys() {
+RemoteLoadSurveys makeRemoteLoadSurveys() {
   return RemoteLoadSurveys(
     httpClient: makeAuthorizeHttpClientDecorator(),
     url: makeApiUrl('surveys'),
   );
 }
 
-LoadSurveys makeLocalLoadSurveys() {
+LocalLoadSurveys makeLocalLoadSurveys() {
   return LocalLoadSurveys(
     cacheStorage: makeLocalStorageAdapter(),
   );
@@ -19,7 +19,7 @@ LoadSurveys makeLocalLoadSurveys() {
 
 LoadSurveys makeRemoteLoadSurveysWithLocalFallback() {
   return RemoteLoadSurveysWithLocalFallback(
-    remote: makeRemoteLoadSurveys() as RemoteLoadSurveys,
-    local: makeLocalLoadSurveys() as LocalLoadSurveys,
+    remote: makeRemoteLoadSurveys(),
+    local: makeLocalLoadSurveys(),
   );
 }

@@ -14,8 +14,8 @@ class AuthorizeHttpClientDecorator implements HttpClient {
 
   @override
   Future<dynamic> request({
-    required String? url,
-    required String? method,
+    required String url,
+    required String method,
     Map? body,
     Map? headers,
   }) async {

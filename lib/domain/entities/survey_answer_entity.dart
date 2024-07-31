@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 
 class SurveyAnswerEntity extends Equatable {
   final String? image;
-  final String? answer;
-  final bool? isCurrentAnswer;
-  final int? percent;
+  final String answer;
+  final bool isCurrentAnswer;
+  final int percent;
 
   SurveyAnswerEntity({
     this.image,

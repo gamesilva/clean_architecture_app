@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import '../../domain/entities/entities.dart';
 import 'models.dart';
 

@@ -6,6 +6,6 @@ import '../../factories.dart';
 
 Widget makeSurveyResultPage() {
   return SurveyResultPage(
-    makeStreamSurveyResultPresenter(Get.parameters['survey_id']!),
+    makeStreamSurveyResultPresenter(Get.parameters['survey_id'] ?? ''),
   );
 }
