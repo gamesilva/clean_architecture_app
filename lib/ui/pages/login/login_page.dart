@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,8 +9,8 @@ import 'components/components.dart';
 import 'login_presenter.dart';
 
 class LoginPage extends StatefulWidget {
-  final LoginPresenter? presenter;
-  const LoginPage({Key? key, this.presenter}) : super(key: key);
+  final LoginPresenter presenter;
+  const LoginPage(this.presenter);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -23,7 +21,7 @@ class _LoginPageState extends State<LoginPage>
   @override
   void dispose() {
     super.dispose();
-    widget.presenter?.dispose();
+    widget.presenter.dispose();
   }
 
   @override
@@ -31,9 +29,9 @@ class _LoginPageState extends State<LoginPage>
     return Scaffold(
       body: Builder(
         builder: ((context) {
-          handleLoading(context, widget.presenter?.isLoadingStream);
-          handleMainError(context, widget.presenter?.mainErrorStream);
-          handleNavigation(widget.presenter?.navigateToStream, clear: true);
+          handleLoading(context, widget.presenter.isLoadingStream);
+          handleMainError(context, widget.presenter.mainErrorStream);
+          handleNavigation(widget.presenter.navigateToStream, clear: true);
 
           return GestureDetector(
             onTap: () => hideKeyboard(context),
@@ -57,8 +55,8 @@ class _LoginPageState extends State<LoginPage>
                               child: PasswordInput(),
                             ),
                             LoginButton(),
-                            FlatButton.icon(
-                              onPressed: widget.presenter?.goToSignUp,
+                            TextButton.icon(
+                              onPressed: widget.presenter.goToSignUp,
                               icon: const Icon(Icons.person),
                               label: Text(R.strings.addAccount),
                             )

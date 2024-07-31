@@ -21,7 +21,7 @@ void main() {
     When mockFetchCall() =>
         when(() => cacheStorage.fetch('survey_result/$surveyId'));
 
-    void mockFetch(Map? json) {
+    void mockFetch(Map json) {
       data = json;
       mockFetchCall().thenAnswer((_) async => data);
     }
@@ -70,13 +70,6 @@ void main() {
 
     test('Should throws UnexpectedError if cache is empty', () async {
       mockFetch({});
-      final future = sut.loadBySurvey(surveyId: surveyId);
-
-      expect(future, throwsA(DomainError.unexpected));
-    });
-
-    test('Should throws UnexpectedError if cache is null', () async {
-      mockFetch(null);
       final future = sut.loadBySurvey(surveyId: surveyId);
 
       expect(future, throwsA(DomainError.unexpected));

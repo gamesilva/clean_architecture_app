@@ -1,4 +1,3 @@
-// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 
 import '../helpers/helpers.dart';
@@ -22,7 +21,7 @@ class ReloadScreen extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 10),
-          RaisedButton(
+          ElevatedButton(
             child: Text(R.strings.reload),
             onPressed: reload,
           )

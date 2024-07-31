@@ -6,8 +6,8 @@ import '../../http/http.dart';
 import '../../models/models.dart';
 
 class RemoteLoadSurveyResult implements LoadSurveyResult {
-  final String? url;
-  final HttpClient? httpClient;
+  final String url;
+  final HttpClient httpClient;
 
   RemoteLoadSurveyResult({
     required this.url,
@@ -15,9 +15,9 @@ class RemoteLoadSurveyResult implements LoadSurveyResult {
   });
 
   @override
-  Future<SurveyResultEntity>? loadBySurvey({String? surveyId}) async {
+  Future<SurveyResultEntity>? loadBySurvey({required String surveyId}) async {
     try {
-      final json = await httpClient?.request(url: url, method: 'GET');
+      final json = await httpClient.request(url: url, method: 'GET');
       return RemoteSurveyResultModel.fromJson(json).toEntity();
     } on HttpError catch (error) {
       throw error == HttpError.forbidden

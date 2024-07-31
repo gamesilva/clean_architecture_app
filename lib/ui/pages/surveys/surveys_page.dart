@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +11,9 @@ import 'survey_viewmodel.dart';
 import 'surveys_presenter.dart';
 
 class SurveysPage extends StatefulWidget {
-  final SurveysPresenter? presenter;
+  final SurveysPresenter presenter;
 
-  SurveysPage({this.presenter});
+  SurveysPage(this.presenter);
 
   @override
   State<SurveysPage> createState() => _SurveysPageState();
@@ -32,18 +30,18 @@ class _SurveysPageState extends State<SurveysPage>
         title: Text(R.strings.surveys),
       ),
       body: Builder(builder: (context) {
-        handleLoading(context, widget.presenter?.isLoadingStream);
-        handleSessionExpired(widget.presenter?.isSessionExpiredStream);
-        handleNavigation(widget.presenter?.navigateToStream);
-        widget.presenter?.loadData();
+        handleLoading(context, widget.presenter.isLoadingStream);
+        handleSessionExpired(widget.presenter.isSessionExpiredStream);
+        handleNavigation(widget.presenter.navigateToStream);
+        widget.presenter.loadData();
 
         return StreamBuilder<List<SurveyViewModel>?>(
-          stream: widget.presenter?.surveysStream,
+          stream: widget.presenter.surveysStream,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return ReloadScreen(
                 error: snapshot.error.toString(),
-                reload: widget.presenter?.loadData,
+                reload: widget.presenter.loadData,
               );
             }
 
@@ -63,7 +61,7 @@ class _SurveysPageState extends State<SurveysPage>
 
   @override
   void didPopNext() {
-    widget.presenter?.loadData();
+    widget.presenter.loadData();
     super.didPopNext();
   }
 

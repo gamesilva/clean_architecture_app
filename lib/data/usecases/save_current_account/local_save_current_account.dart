@@ -13,7 +13,7 @@ class LocalSaveCurrentAccount implements SaveCurrentAccount {
     try {
       await saveSecureChacheStorage.save(
         key: 'token',
-        value: account.token!,
+        value: account.token,
       );
     } catch (error) {
       throw DomainError.unexpected;

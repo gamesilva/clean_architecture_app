@@ -6,8 +6,8 @@ import '../../http/http.dart';
 import '../../models/models.dart';
 
 class RemoteLoadSurveys implements LoadSurveys {
-  final String? url;
-  final HttpClient? httpClient;
+  final String url;
+  final HttpClient httpClient;
 
   RemoteLoadSurveys({
     required this.url,
@@ -17,7 +17,7 @@ class RemoteLoadSurveys implements LoadSurveys {
   @override
   Future<List<SurveyEntity>>? load() async {
     try {
-      final httpResponse = await httpClient?.request(url: url, method: 'GET');
+      final httpResponse = await httpClient.request(url: url, method: 'GET');
       return httpResponse!
           .map<SurveyEntity>(
               (json) => RemoteSurveyModel.fromJson(json).toEntity())

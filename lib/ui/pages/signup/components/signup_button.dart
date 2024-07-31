@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +11,7 @@ class SignUpButton extends StatelessWidget {
     return StreamBuilder<dynamic>(
       stream: presenter.isFormValidStream,
       builder: (context, snapshot) {
-        return RaisedButton(
+        return ElevatedButton(
           onPressed: (snapshot.data != null && snapshot.data)
               ? presenter.signUp
               : null,

@@ -19,7 +19,7 @@ void main() {
 
     When mockFetchCall() => when(() => cacheStorage.fetch('surveys'));
 
-    void mockFetch(List<Map>? list) {
+    void mockFetch(List<Map> list) {
       data = list;
       mockFetchCall().thenAnswer((_) async => data);
     }
@@ -62,13 +62,6 @@ void main() {
 
     test('Should throws UnexpectedError if cache is empty', () async {
       mockFetch([]);
-      final future = sut.load();
-
-      expect(future, throwsA(DomainError.unexpected));
-    });
-
-    test('Should throws UnexpectedError if cache is null', () async {
-      mockFetch(null);
       final future = sut.load();
 
       expect(future, throwsA(DomainError.unexpected));

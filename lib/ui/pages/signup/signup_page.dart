@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +9,7 @@ import 'components/components.dart';
 import 'signup_presenter.dart';
 
 class SignUpPage extends StatefulWidget {
-  final SignUpPresenter? presenter;
+  final SignUpPresenter presenter;
   SignUpPage(this.presenter);
 
   @override
@@ -25,9 +23,9 @@ class _SignUpPage extends State<SignUpPage>
     return Scaffold(
       body: Builder(
         builder: ((context) {
-          handleLoading(context, widget.presenter?.isLoadingStream);
-          handleMainError(context, widget.presenter?.mainErrorStream);
-          handleNavigation(widget.presenter?.navigateToStream, clear: true);
+          handleLoading(context, widget.presenter.isLoadingStream);
+          handleMainError(context, widget.presenter.mainErrorStream);
+          handleNavigation(widget.presenter.navigateToStream, clear: true);
 
           return GestureDetector(
             onTap: () => hideKeyboard(context),
@@ -57,8 +55,8 @@ class _SignUpPage extends State<SignUpPage>
                               child: PasswordConfirmationInput(),
                             ),
                             SignUpButton(),
-                            FlatButton.icon(
-                              onPressed: widget.presenter?.goToLogin,
+                            TextButton.icon(
+                              onPressed: widget.presenter.goToLogin,
                               icon: const Icon(Icons.exit_to_app),
                               label: Text(R.strings.login),
                             )

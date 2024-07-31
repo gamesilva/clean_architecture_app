@@ -30,9 +30,9 @@ class LocalSurveyAnswerModel {
   factory LocalSurveyAnswerModel.fromEntity(SurveyAnswerEntity entity) =>
       LocalSurveyAnswerModel(
         image: entity.image,
-        answer: entity.answer!,
-        percent: entity.percent!,
-        isCurrentAnswer: entity.isCurrentAnswer!,
+        answer: entity.answer,
+        percent: entity.percent,
+        isCurrentAnswer: entity.isCurrentAnswer,
       );
 
   SurveyAnswerEntity toEntity() => SurveyAnswerEntity(

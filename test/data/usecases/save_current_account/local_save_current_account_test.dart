@@ -32,7 +32,7 @@ void main() {
 
     verify(() => saveSecureChacheStorage.save(
           key: 'token',
-          value: account.token!,
+          value: account.token,
         ));
   });
 

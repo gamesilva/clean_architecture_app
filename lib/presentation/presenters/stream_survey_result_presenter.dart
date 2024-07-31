@@ -61,7 +61,6 @@ class StreamSurveyResultPresenter
     }
   }
 
-  @override
   void dispose() {
     _surveyResult?.close();
     _surveyResult = null;
