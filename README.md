@@ -1,16 +1,77 @@
-# clean_architecture_app
+![Udemy](https://img.shields.io/badge/Udemy-A435F0?style=for-the-badge&logo=Udemy&logoColor=white)
+![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 
-A new Flutter project.
+![Dart Version](https://img.shields.io/static/v1?label=dart&message=2.16.2&color=00579d)
+![Flutter Version](https://img.shields.io/static/v1?label=flutter&message=2.10.5&color=42a5f5)
+![Null Safety](https://img.shields.io/static/v1?label=null-safety&message=done&color=success)
 
-## Getting Started
+# 4Dev - Enquetes para programadores
 
-This project is a starting point for a Flutter application.
+Este aplicativo faz parte de um estudo realizado pelo professor Rodrigo Manguinho na Udemy.
 
-A few resources to get you started if this is your first Flutter project:
+O objetivo desse estudo é mostrar a criação de um aplicativo Flutter usando uma arquitetura bem definida e desacoplada. Como metodologia de trabalho, foram usados TDD (Test Driven Development), Clean Architecture para distribuicão de responsabilidades em camadas, princípios do SOLID e Design Patters.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Princípios
+- Single Responsibility Principle (SRP)
+- Open Closed Principle (OCP)
+- Liskov Substitution Principle (LSP)
+- Interface Segregation Principle (ISP)
+- Dependency Inversion Principle (DIP)
+- Separation of Concerns (SOC)
+- Don't Repeat Yourself (DRY)
+- You Aren't Gonna Need It (YAGNI)
+- Keep It Simple, Silly (KISS)
+- Command Query Responsibility Segregation (CQRS)
+- Composition Over Inheritance
+- Small Commits
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Design Patterns
+- Factory
+- Adapter
+- Composite
+- Decorator
+- Dependency Injection
+- Abstract Server
+- Composition Root
+- Builder
+- Singleton
+- Observer
+- Strategy
+- AAA (Arrange, Act, Assert)
+
+## Metodologias e Designs
+- TDD
+- BDD
+- Clean Architecture
+- Reactive Programming
+- GitFlow
+- Modular Design
+- Dependency Diagrams
+- Use Cases
+
+## Bibliotecas e Ferramentas
+- Flutter
+- Http
+- Provider
+- GetX
+- Equatable
+- Mockito
+- Mocktail
+- Faker
+- Git
+- Flutter Secure Storage
+- LocalStorage
+- i18n
+- Network Image Mock
+
+## Testes
+- Testes Unitários
+- Testes de Widgets
+- Testes de Streams
+- Testes de Integração
+- Cobertura de Testes
+- Test Doubles
+- Mocks
+- Stubs
+- Spies
